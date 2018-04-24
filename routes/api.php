@@ -21,6 +21,9 @@ Route::post('login', 'Auth\LoginController@login');
 Route::post('logout', 'Auth\LoginController@logout');
 Route::post('register', 'Auth\RegisterController@register');
 
+Route::get ( '/redirect/{service}', 'Auth\SocialAuthController@redirect' );
+Route::get ( '/callback/{service}', 'Auth\SocialAuthController@callback' );
+
 /*
 Route::group(['middleware' => 'auth:api'], function() {
     Route::get('articles', 'ArticleController@index');
