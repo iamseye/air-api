@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class ChangeEmailNullableInUsersTable extends Migration
+class PrepareUsersTableForSocialAuthentication extends Migration
 {
     /**
      * Run the migrations.
@@ -15,6 +15,7 @@ class ChangeEmailNullableInUsersTable extends Migration
     {
         Schema::table('users', function (Blueprint $table) {
             $table->string('email')->nullable()->change();
+            $table->string('password')->nullable()->change();
         });
     }
 
@@ -26,7 +27,8 @@ class ChangeEmailNullableInUsersTable extends Migration
     public function down()
     {
         Schema::table('users', function (Blueprint $table) {
-            $table->string('email')->unique()->change();
+            $table->string('email')->nullable(false)->change();
+            $table->string('password')->nullable(false)->change();
         });
     }
 }

@@ -19,7 +19,14 @@ class SocialAuthController extends Controller
 
     public function callback($provider)
     {
-        $socialiteUser = Socialite::with($provider)->user();
+        try {
+            $socialiteUser = Socialite::with($provider)->user();
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'code' => 'SOCIAL_LOGIN_ERROR'
+            ]);
+        }
 
         $user = $this->findOrCreateUser($provider, $socialiteUser);
 
@@ -29,7 +36,8 @@ class SocialAuthController extends Controller
         auth()->login($user, false);
 
         return response()->json([
-            'data' => $user['name'],
+            'success' => true,
+            'data' => $user->toArray(),
         ]);
     }
 
@@ -47,8 +55,7 @@ class SocialAuthController extends Controller
 
         $user = User::create([
             'name' => $socialiteUser->getName(),
-            'email' => $socialiteUser->getEmail(),
-            'password' => bcrypt(str_random(25)),
+            'email' => $socialiteUser->getEmail()
         ]);
 
         $this->addSocialAccount($provider, $user, $socialiteUser);
