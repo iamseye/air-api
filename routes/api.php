@@ -17,12 +17,11 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-Route::post('login', 'Auth\LoginController@login');
-Route::post('logout', 'Auth\LoginController@logout');
-Route::post('register', 'Auth\RegisterController@register');
+Route::post('login', 'UserController@login');
 
-Route::get('/redirect/{service}', 'Auth\SocialAuthController@redirect');
-Route::get('/callback/{service}', 'Auth\SocialAuthController@callback');
+Route::post('logout', 'UserController@logout');
+Route::post('register', 'UserController@register');
+
 
 /*
 Route::group(['middleware' => 'auth:api'], function() {

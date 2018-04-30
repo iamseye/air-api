@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers\Auth;
 
-
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Laravel\Socialite\Facades\Socialite;
@@ -29,11 +28,10 @@ class SocialAuthController extends Controller
         }
 
         $user = $this->findOrCreateUser($provider, $socialiteUser);
-
         // TODO: true for remember user
 
         // check email & phone number, if both has > login, if not > pass false ask input > login again
-        auth()->login($user, false);
+        $user->createToken('user-app')->accessToken;
 
         return response()->json([
             'success' => true,
@@ -55,7 +53,7 @@ class SocialAuthController extends Controller
 
         $user = User::create([
             'name' => $socialiteUser->getName(),
-            'email' => $socialiteUser->getEmail()
+            'email' => $socialiteUser->getEmail(),
         ]);
 
         $this->addSocialAccount($provider, $user, $socialiteUser);
