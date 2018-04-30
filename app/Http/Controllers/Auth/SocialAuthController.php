@@ -2,11 +2,11 @@
 
 namespace App\Http\Controllers\Auth;
 
-use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Laravel\Socialite\Facades\Socialite;
 use App\SocialAccount;
 use App\User;
+use App\Transformers\UserTransformer;
 
 class SocialAuthController extends Controller
 {
@@ -29,14 +29,14 @@ class SocialAuthController extends Controller
 
         $user = $this->findOrCreateUser($provider, $socialiteUser);
         // TODO: true for remember user
-
-        // check email & phone number, if both has > login, if not > pass false ask input > login again
+        // TODO: ask to input phone number then login user
+        // Login user
         $user->createToken('user-app')->accessToken;
 
-        return response()->json([
-            'success' => true,
-            'data' => $user->toArray(),
-        ]);
+        return fractal()
+            ->item($user)
+            ->transformWith(new UserTransformer)
+            ->toArray();
     }
 
     public function findOrCreateUser($provider, $socialiteUser)
@@ -81,7 +81,6 @@ class SocialAuthController extends Controller
             'user_id' => $user->id,
             'provider' => $provider,
             'provider_id' => $socialiteUser->getId(),
-            'token' => $socialiteUser->token,
         ]);
     }
 }

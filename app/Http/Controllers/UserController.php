@@ -12,9 +12,9 @@ class UserController extends Controller
 {
     public $successStatus = 200;
 
-    public function login(){
-
-        if(Auth::attempt(['email' => request('email'), 'password' => request('password')])){
+    public function login()
+    {
+        if (Auth::attempt(['email' => request('email'), 'password' => request('password')])) {
             $user = Auth::user();
             $success['token'] =  $user->createToken('user-app')->accessToken;
 
@@ -22,8 +22,7 @@ class UserController extends Controller
                 ->item($user)
                 ->transformWith(new UserTransformer)
                 ->toArray();
-        }
-        else {
+        } else {
             return response()->json(['error'=>'Unauthorised'], 401);
         }
     }
@@ -34,6 +33,7 @@ class UserController extends Controller
         $user->name = $request->name;
         $user->email = $request->email;
         $user->password = bcrypt($request->password);
+        $user->mobile_number = $request->mobile_number;
 
         $user->save();
 
@@ -41,5 +41,11 @@ class UserController extends Controller
             ->item($user)
             ->transformWith(new UserTransformer)
             ->toArray();
+    }
+
+
+    public function logout()
+    {
+
     }
 }
