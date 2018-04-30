@@ -81,6 +81,7 @@ class SocialAuthController extends Controller
             'user_id' => $user->id,
             'provider' => $provider,
             'provider_id' => $socialiteUser->getId(),
+            'token' => $socialiteUser->token
         ]);
     }
 }
