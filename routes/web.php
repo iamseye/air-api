@@ -16,5 +16,5 @@ Route::get('/', function () {
 });
 
 
-Route::get ( '/social-auth/{service}', 'Auth\SocialAuthController@redirect' );
-Route::get ( '/social-auth/{service}/callback', 'Auth\SocialAuthController@callback' );
+Route::get('/social-auth/{service}', 'Auth\SocialAuthController@redirect');
+Route::get('/social-auth/{service}/callback', 'Auth\SocialAuthController@callback');

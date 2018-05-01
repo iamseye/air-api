@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use App\User;
 
 class LoginController extends Controller
 {
@@ -29,6 +30,7 @@ class LoginController extends Controller
         if ($this->attemptLogin($request)) {
             $user = $this->guard()->user();
             $user->generateToken();
+            // Auth::login($user);
 
             return response()->json([
                 'data' => $user->toArray(),
@@ -40,8 +42,9 @@ class LoginController extends Controller
 
     public function logout(Request $request)
     {
-        $user = Auth::guard('api')->user();
+       // $user = Auth::guard('api')->user();
 
+        $user = User::where('email', $request->email)->first();
         if ($user) {
             $user->api_token = null;
             $user->save();

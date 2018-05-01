@@ -3,11 +3,11 @@
 namespace App\Http\Controllers\Auth;
 
 
-use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Laravel\Socialite\Facades\Socialite;
 use App\SocialAccount;
 use App\User;
+use Illuminate\Support\Facades\Auth;
 
 class SocialAuthController extends Controller
 {
@@ -33,7 +33,7 @@ class SocialAuthController extends Controller
         // TODO: true for remember user
 
         // check email & phone number, if both has > login, if not > pass false ask input > login again
-        auth()->login($user, false);
+        $this->loginUser($user);
 
         return response()->json([
             'success' => true,
@@ -85,5 +85,10 @@ class SocialAuthController extends Controller
             'provider_id' => $socialiteUser->getId(),
             'token' => $socialiteUser->token,
         ]);
+    }
+
+    public function loginUser($user)
+    {
+        $user->generateToken();
     }
 }
