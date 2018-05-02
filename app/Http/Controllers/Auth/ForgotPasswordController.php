@@ -3,10 +3,11 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Foundation\Auth\SendsPasswordResetEmails;
+use App\Notifications\ResetPassword;
 use App\User;
+use Illuminate\Foundation\Auth\SendsPasswordResetEmails;
 use Illuminate\Http\Request;
-
+use Illuminate\Support\Facades\Notification;
 
 class ForgotPasswordController extends Controller
 {
@@ -51,13 +52,35 @@ class ForgotPasswordController extends Controller
                 ]);
             }
 
+            return$this->broker()->createToken($user);
+        }
+    }
+
+    public function sendResetPasswordEmail(Request $request)
+    {
+        $this->validate($request, ['email' => 'required|email']);
+
+        if ($request->wantsJson()) {
+            $user = User::where('email', $request->input('email'))->first();
+            if (!$user) {
+                return response()->json([
+                    'message' => 'cant find the user',
+                ]);
+            }
+
             $token = $this->broker()->createToken($user);
 
-            return response()->json([
-                'data' => [
-                    'token' => $token
-                ],
-            ]);
+            try {
+                $user->notify(new ResetPassword($user));
+                return response()->json([
+                    'message' => 'Email sent',
+                ]);
+            } catch (\Exception $exception) {
+                return response()->json([
+                    'message' => 'sending email error',
+                ]);
+            }
+
         }
     }
 }
