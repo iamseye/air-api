@@ -2,6 +2,7 @@
 
 namespace App;
 
+use App\EmailVerifyToken;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 
@@ -15,7 +16,8 @@ class User extends Authenticatable
      * @var array
      */
     protected $fillable = [
-        'name', 'email', 'password',
+        'name', 'email', 'password', 'is_email_verified', 'is_phone_verified',
+        'is_ID_card_verified', 'is_driver_license_verified', 'is_photo_verified'
     ];
 
     /**
@@ -33,5 +35,10 @@ class User extends Authenticatable
         $this->save();
 
         return $this->api_token;
+    }
+
+    public function emailVerification()
+    {
+        return $this->hasOne('App\EmailVerifyToken');
     }
 }

@@ -23,6 +23,7 @@ Route::post('register', 'Auth\RegisterController@register');
 Route::post('password/email', 'Auth\ForgotPasswordController@sendResetPasswordEmail');
 Route::post('password/reset', 'Auth\ResetPasswordController@reset');
 
+
 //
 //Route::group(['middleware' => 'auth:api'], function() {
 //    Route::get('articles', 'ArticleController@index');
