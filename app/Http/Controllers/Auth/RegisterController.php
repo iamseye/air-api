@@ -4,7 +4,6 @@ namespace App\Http\Controllers\Auth;
 
 use App\EmailVerifyToken;
 use App\User;
-use App\Notifications\VerifyEmail;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
@@ -53,10 +52,10 @@ class RegisterController extends Controller
      */
     protected function registered(Request $request, $user)
     {
-        $emailVerification = new EmailVerifyToken();
-        $emailVerification->generateVerifyToken($user);
+        $emailVerifyToken= new EmailVerifyToken();
+        $emailVerifyToken->generateVerifyToken($user);
 
-        $user->notify(new VerifyEmail($user));
+        $user->sendVerificationEmail();
 
 //        $user->generateToken();
         return response()->json(['data' => $user->toArray()], 201);

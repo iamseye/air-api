@@ -45,7 +45,7 @@ class VerifyEmail extends Notification
     {
         return (new MailMessage)
                     ->line('請點選下列按鈕驗證您的Email')
-                    ->action('驗證Email', route('verify-email', $this->user->emailVerification()->first()->token))
+                    ->action('驗證Email', route('verify-email', $this->user->emailVerifyToken()->first()->token))
                     ->line('感謝您使用我們的平台!');
     }
 

@@ -2,7 +2,7 @@
 
 namespace App;
 
-use App\EmailVerifyToken;
+use App\Notifications\VerifyEmail;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 
@@ -37,7 +37,17 @@ class User extends Authenticatable
         return $this->api_token;
     }
 
-    public function emailVerification()
+    public function emailVerified()
+    {
+        return $this->is_email_verified;
+    }
+
+    public function sendVerificationEmail()
+    {
+        $this->notify(new VerifyEmail($this));
+    }
+
+    public function emailVerifyToken()
     {
         return $this->hasOne('App\EmailVerifyToken');
     }
