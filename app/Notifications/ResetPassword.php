@@ -42,7 +42,7 @@ class ResetPassword extends Notification
      */
     public function toMail($notifiable)
     {
-        $url = url('/');
+        $url = url(env('RESET_PASSPORT_URL'));
 
         return (new MailMessage)
             ->greeting('Hello!')
