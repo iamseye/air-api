@@ -4,26 +4,23 @@ namespace App\Http\Controllers;
 
 use App\EmailVerifyToken;
 use App\User;
+use App\Traits\ResponseTrait;
 use Illuminate\Http\Request;
 
 class VerifyController extends Controller
 {
+    use ResponseTrait;
+
     public function verifyEmail($token)
     {
         try {
             $emailToken = EmailVerifyToken::where('token', $token)->firstOrFail();
         } catch (\Exception $e) {
-            return response()->json([
-                'success' => false,
-                'code' => 'TOKEN_NOT_EXIST'
-            ]);
+            $this->returnError('TOKEN_NOT_EXIST');
         }
 
         if ($emailToken->is_used) {
-            return response()->json([
-                'success' => false,
-                'code' => 'TOKEN_USED'
-            ]);
+            $this->returnError('TOKEN_USED');
         }
 
         $emailToken->update(['is_used' => true]);
@@ -38,17 +35,11 @@ class VerifyController extends Controller
         try {
             $user = User::where('email', $request->email)->firstOrFail();
         } catch (\Exception $e) {
-            return response()->json([
-                'success' => false,
-                'code' => 'EMAIL_NOT_REGISTERED'
-            ]);
+            $this->returnError('EMAIL_NOT_REGISTERED');
         }
 
         if ($user->is_email_verified) {
-            return response()->json([
-                'success' => false,
-                'code' => 'EMAIL_IS_VERIFIED'
-            ]);
+            $this->returnError('EMAIL_IS_VERIFIED');
         }
 
         $emailVerifyToken= new EmailVerifyToken();
@@ -57,10 +48,7 @@ class VerifyController extends Controller
         try {
             $user->sendVerificationEmail();
         } catch (\Exception $e) {
-            return response()->json([
-                'success' => false,
-                'code' => 'SEND_EMAIL_FAILED'
-            ]);
+            $this->returnError('SEND_EMAIL_FAILED');
         }
     }
 }

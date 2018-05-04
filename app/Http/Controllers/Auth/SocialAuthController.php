@@ -7,10 +7,12 @@ use App\Http\Controllers\Controller;
 use Laravel\Socialite\Facades\Socialite;
 use App\SocialAccount;
 use App\User;
+use App\Traits\ResponseTrait;
 use Illuminate\Support\Facades\Auth;
 
 class SocialAuthController extends Controller
 {
+    use ResponseTrait;
 
     public function redirect($provider)
     {
@@ -22,10 +24,7 @@ class SocialAuthController extends Controller
         try {
             $socialiteUser = Socialite::with($provider)->user();
         } catch (\Exception $e) {
-            return response()->json([
-                'success' => false,
-                'code' => 'SOCIAL_LOGIN_ERROR'
-            ]);
+            $this->returnError('SOCIAL_LOGIN_ERROR');
         }
 
         $user = $this->findOrCreateUser($provider, $socialiteUser);

@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Auth;
 use App\Http\Controllers\Controller;
 use App\Notifications\ResetPassword;
 use App\User;
+use App\Traits\ResponseTrait;
 use Illuminate\Foundation\Auth\SendsPasswordResetEmails;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Notification;
@@ -22,7 +23,7 @@ class ForgotPasswordController extends Controller
     |
     */
 
-    use SendsPasswordResetEmails;
+    use SendsPasswordResetEmails, ResponseTrait;
 
     /**
      * Create a new controller instance.
@@ -63,9 +64,7 @@ class ForgotPasswordController extends Controller
         if ($request->wantsJson()) {
             $user = User::where('email', $request->input('email'))->first();
             if (!$user) {
-                return response()->json([
-                    'message' => 'cant find the user',
-                ]);
+                $this->returnError('USER_NOT_EXIST');
             }
 
             $token = $this->broker()->createToken($user);
@@ -76,9 +75,7 @@ class ForgotPasswordController extends Controller
                     'message' => 'Email sent',
                 ]);
             } catch (\Exception $exception) {
-                return response()->json([
-                    'message' => 'sending email error',
-                ]);
+                $this->returnError('SEND_EMAIL_FAILED');
             }
 
         }

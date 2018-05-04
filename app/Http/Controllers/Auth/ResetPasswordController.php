@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Traits\ResponseTrait;
 use Illuminate\Foundation\Auth\ResetsPasswords;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Password;
@@ -20,7 +21,7 @@ class ResetPasswordController extends Controller
     |
     */
 
-    use ResetsPasswords;
+    use ResetsPasswords, ResponseTrait;
 
     /**
      * Where to redirect users after resetting their password.
@@ -57,9 +58,7 @@ class ResetPasswordController extends Controller
                     'message' => 'password reset',
                 ]);
             } else {
-                return response()->json([
-                    'message' => 'error',
-                ]);
+                $this->returnError('PASSWORD_RESET_ERROR');
             }
         }
         // If the password was successfully reset, we will redirect the user back to
