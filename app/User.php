@@ -49,6 +49,6 @@ class User extends Authenticatable
 
     public function emailVerifyToken()
     {
-        return $this->hasOne('App\EmailVerifyToken');
+        return $this->hasOne('App\EmailVerifyToken', 'email', 'email');
     }
 }

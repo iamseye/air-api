@@ -2,7 +2,6 @@
 
 namespace App;
 
-use App\User;
 use Illuminate\Database\Eloquent\Model;
 
 class EmailVerifyToken extends Model
@@ -12,15 +11,15 @@ class EmailVerifyToken extends Model
         'is_used'
     ];
 
-    public function generateVerifyToken(User $user)
+    public function generateVerifyToken($email)
     {
-        $this->user_id = $user->id;
+        $this->email = $email;
         $this->token = str_random(60);
         $this->save();
     }
 
     public function user()
     {
-        return $this->belongsTo('App\User');
+        return $this->belongsTo('App\User', 'email', 'email');
     }
 }

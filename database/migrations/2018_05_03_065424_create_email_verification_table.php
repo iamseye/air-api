@@ -15,7 +15,7 @@ class CreateEmailVerificationTable extends Migration
     {
         Schema::create('email_verify_tokens', function (Blueprint $table) {
             $table->increments('id');
-            $table->unsignedInteger('user_id');
+            $table->string('email');
             $table->string('token', 60)->unique()->nullable();
             $table->boolean('is_used')->default(false);
             $table->timestamps();

@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers\Auth;
 
-use App\EmailVerifyToken;
 use App\User;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Hash;
@@ -52,11 +51,6 @@ class RegisterController extends Controller
      */
     protected function registered(Request $request, $user)
     {
-        $emailVerifyToken= new EmailVerifyToken();
-        $emailVerifyToken->generateVerifyToken($user);
-
-        $user->sendVerificationEmail();
-
 //        $user->generateToken();
         return response()->json(['data' => $user->toArray()], 201);
     }
