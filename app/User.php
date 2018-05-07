@@ -16,7 +16,7 @@ class User extends Authenticatable
      * @var array
      */
     protected $fillable = [
-        'name', 'email', 'password', 'is_email_verified', 'is_phone_verified',
+        'name', 'email', 'mobile', 'password', 'is_email_verified', 'is_phone_verified',
         'is_ID_card_verified', 'is_driver_license_verified', 'is_photo_verified'
     ];
 
@@ -50,5 +50,10 @@ class User extends Authenticatable
     public function emailVerifyToken()
     {
         return $this->hasOne('App\EmailVerifyToken', 'email', 'email');
+    }
+
+    public function phoneVerifyCode()
+    {
+        return $this->hasOne('App\PhoneVerifyCode', 'mobile', 'mobile');
     }
 }

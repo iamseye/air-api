@@ -4,8 +4,11 @@ namespace App\Http\Controllers;
 
 use App\EmailVerifyToken;
 use App\User;
+use App\PhoneVerifyCode;
 use App\Traits\ResponseTrait;
+use GuzzleHttp\Client;
 use Illuminate\Http\Request;
+use Carbon\Carbon;
 
 class VerifyController extends Controller
 {
@@ -16,11 +19,11 @@ class VerifyController extends Controller
         try {
             $emailToken = EmailVerifyToken::where('token', $token)->firstOrFail();
         } catch (\Exception $e) {
-            $this->returnError('TOKEN_NOT_EXIST');
+            return $this->returnError('TOKEN_NOT_EXIST');
         }
 
         if ($emailToken->is_used) {
-            $this->returnError('TOKEN_USED');
+            return $this->returnError('TOKEN_USED');
         }
 
         $emailToken->update(['is_used' => true]);
@@ -35,11 +38,11 @@ class VerifyController extends Controller
         try {
             $user = User::where('email', $request->email)->firstOrFail();
         } catch (\Exception $e) {
-            $this->returnError('EMAIL_NOT_REGISTERED');
+            return $this->returnError('EMAIL_NOT_REGISTERED');
         }
 
         if ($user->is_email_verified) {
-            $this->returnError('EMAIL_IS_VERIFIED');
+            return $this->returnError('EMAIL_IS_VERIFIED');
         }
 
         $emailVerifyToken= new EmailVerifyToken();
@@ -48,7 +51,65 @@ class VerifyController extends Controller
         try {
             $user->sendVerificationEmail();
         } catch (\Exception $e) {
-            $this->returnError('SEND_EMAIL_FAILED');
+            return $this->returnError('SEND_EMAIL_FAILED');
         }
+    }
+
+    public function sendMobileVerificationCode(Request $request)
+    {
+        $userMobile = $request->mobile;
+
+        try {
+            User::findOrFail($request->user_id)
+                ->update(['mobile' => $userMobile]);
+        } catch (\Exception $e) {
+            return $this->returnError('USER_NOT_FOUND');
+        }
+
+        $phoneVerifyCode= new PhoneVerifyCode();
+        $phoneVerifyCode = $phoneVerifyCode->generateVerifyCode($userMobile);
+
+        try {
+//            $client = new Client();
+//            $client->get('http://api.every8d.com/API21/HTTP/sendSMS.ashx', [
+//                'form_params' => [
+//                    'UID' => env('SEND_TEXT_SERVER_USERID'),
+//                    'PWD' => env('SEND_TEXT_SERVER_PASSWORD'),
+//                    'MSG' => '感謝您使用AirCnC平台，您的驗證碼為：' . $phoneVerifyCode,
+//                    'DEST' => $userMobile
+//                ]
+//            ]);
+
+            return $this->returnSuccess('MOBILE_VERIFY_CODE_SENT');
+
+        } catch (\Exception $e) {
+            return $this->returnError('SEND_VERIFY_CODE_API_FAILED');
+        }
+    }
+
+    public function verifyMobile(Request $request)
+    {
+        $mytime = Carbon::now();
+
+        dd($mytime);
+
+        $verifyCode = PhoneVerifyCode::where('code', $request->code)
+            ->where('expired_at', '>', date('Y-m-d H:i:s'))
+            ->first();
+
+
+        if (is_null($verifyCode)) {
+            return $this->returnError('CODE_INVALID');
+        }
+
+        if ($verifyCode->is_used) {
+            return $this->returnError('CODE_USED');
+        }
+
+        $verifyCode->update(['is_used' => true]);
+        $verifyCode->user()
+            ->update(['is_phone_verified' => true]);
+
+        return $this->returnSuccess('MOBILE_VERIFIED');
     }
 }

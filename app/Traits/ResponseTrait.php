@@ -11,4 +11,12 @@ trait ResponseTrait
             'messages' => $errorMessage
         ]);
     }
+
+    public function returnSuccess($message)
+    {
+        return response()->json([
+            'status' => 'ok',
+            'messages' => $message
+        ]);
+    }
 }
