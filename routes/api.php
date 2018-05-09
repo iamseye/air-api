@@ -27,6 +27,7 @@ Route::post('verify-mobile', 'VerifyController@verifyMobile');
 Route::post('password/email', 'Auth\ForgotPasswordController@sendResetPasswordEmail');
 Route::post('password/reset', 'Auth\ResetPasswordController@reset');
 
+Route::post('placeorder', 'PaymentController@placeOrder');
 
 //
 //Route::group(['middleware' => 'auth:api'], function() {
