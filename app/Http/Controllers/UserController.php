@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\User;
+use App\Transformers\UserTransformer;
 
 class UserController extends Controller
 {
@@ -18,6 +19,9 @@ class UserController extends Controller
 
         $user->save();
 
-        return $user;
+        return fractal()
+            ->item($user)
+            ->transformWith(new UserTransformer)
+            ->toArray();
     }
 }

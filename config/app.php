@@ -150,7 +150,7 @@ return [
         /*
          * Package Service Providers...
          */
-
+        Spatie\Fractal\FractalServiceProvider::class,
         Laravel\Socialite\SocialiteServiceProvider::class,
         /*
          * Application Service Providers...

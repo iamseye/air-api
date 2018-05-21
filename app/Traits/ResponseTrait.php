@@ -7,16 +7,18 @@ trait ResponseTrait
     public function returnError($errorMessage)
     {
         return response()->json([
-            'status' => 'error',
-            'messages' => $errorMessage
+            'errors' => [
+                'title' => $errorMessage
+            ]
         ]);
     }
 
     public function returnSuccess($message)
     {
         return response()->json([
-            'status' => 'ok',
-            'messages' => $message
+            'data' => [
+                'message' => $message
+            ]
         ]);
     }
 }
