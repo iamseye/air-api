@@ -16,6 +16,7 @@ use Illuminate\Http\Request;
 Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
+
 Route::post('login', 'Auth\LoginController@login');
 Route::post('logout', 'Auth\LoginController@logout');
 Route::post('register', 'Auth\RegisterController@register');
@@ -27,7 +28,11 @@ Route::post('verify-mobile', 'VerifyController@verifyMobile');
 Route::post('password/email', 'Auth\ForgotPasswordController@sendResetPasswordEmail');
 Route::post('password/reset', 'Auth\ResetPasswordController@reset');
 
-Route::post('placeorder', 'PaymentController@placeOrder');
+Route::post('placeorder', 'PaymentControllunauthenticateder@placeOrder');
+
+Route::group(['middleware' => 'auth:api'], function () {
+    Route::put('user/{id}', 'UserController@update')->name('user.update');
+});
 
 //
 //Route::group(['middleware' => 'auth:api'], function() {
@@ -37,3 +42,8 @@ Route::post('placeorder', 'PaymentController@placeOrder');
 //    Route::put('articles/{article}', 'ArticleController@update');
 //    Route::delete('articles/{article}', 'ArticleController@delete');
 //});
+
+
+//Auth::guard('api')->user(); // instance of the logged user
+//Auth::guard('api')->check(); // if a user is authenticated
+//Auth::guard('api')->id(); // the id of the authenticated user

@@ -21,7 +21,7 @@ class CreateSellCarsTable extends Migration
             $table->string('accessories')->nullable();
             $table->text('descrpition');
             $table->integer('buy_price');
-            $table->integer('sell_price');
+            $table->integer('rent_price');
             $table->datetime('available_from');
             $table->datetime('available_to');
             $table->text('remarks')->nullable();

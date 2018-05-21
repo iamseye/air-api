@@ -7,15 +7,17 @@ use App\User;
 
 class UserController extends Controller
 {
-    public function show()
-    {
-
-    }
 
     public function update(Request $request, $id)
     {
-        $user = User::find($id);
-        $user->name = $request->name;
+        $user = User::findOrFail($id);
+
+        if ($request->name) {
+            $user->name = $request->name;
+        }
+
         $user->save();
+
+        return $user;
     }
 }
