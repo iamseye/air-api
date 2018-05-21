@@ -6,6 +6,11 @@ use App\User;
 
 class UserTransformer extends \League\Fractal\TransformerAbstract
 {
+
+    protected $availableIncludes = [
+        'user_verification'
+    ];
+
     public function transform(User $user)
     {
         return [
@@ -13,5 +18,10 @@ class UserTransformer extends \League\Fractal\TransformerAbstract
             'name' => $user->name,
             'email' => $user->email,
         ];
+    }
+
+    public function includeUserVerification(User $user)
+    {
+        return $this->item($user->verification, new UserVerificationTransformer());
     }
 }

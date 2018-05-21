@@ -21,6 +21,10 @@ class CreateUserVerificationsTable extends Migration
             $table->boolean('is_ID_card_verified')->default(false);
             $table->boolean('is_driver_license_verified')->default(false);
             $table->boolean('is_photo_verified')->default(false);
+            $table->string('ID_card_photo')->nullable();
+            $table->string('driver_license_photo')->nullable();
+            $table->string('personal_photo')->nullable();
+
             $table->timestamps();
 
             $table->foreign('user_id')

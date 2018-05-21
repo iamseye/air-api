@@ -19,7 +19,9 @@ class AddColumnsToUserTable extends Migration
             $table->string('driver_license', 15)->nullable();
             $table->string('ID_number', 10)->nullable();
             $table->date('birth')->nullable();
-            $table->tinyInteger('gender')->default(0);
+            $table->tinyInteger('gender')->nullable();
+            $table->string('address_city')->nullable();
+            $table->string('address_area')->nullable();
             $table->string('address')->nullable();
         });
     }
@@ -38,6 +40,8 @@ class AddColumnsToUserTable extends Migration
             $table->dropColumn(['ID_number']);
             $table->dropColumn('birth');
             $table->dropColumn('gender');
+            $table->dropColumn('address_city');
+            $table->dropColumn('address_area');
             $table->dropColumn('address');
         });
     }
