@@ -26,9 +26,12 @@ class VerifyController extends Controller
             return $this->returnError('TOKEN_USED');
         }
 
-        $emailToken->update(['is_used' => true]);
-        $emailToken->user()
-                    ->update(['is_email_verified' => true]);
+        $emailToken->is_used = true;
+        $emailToken->save();
+
+        $userVerification = $emailToken->user->verification;
+        $userVerification->is_email_verified = true;
+        $userVerification->save();
 
         return redirect(url(env('HOME_PAGE')));
     }
@@ -41,7 +44,7 @@ class VerifyController extends Controller
             return $this->returnError('EMAIL_NOT_REGISTERED');
         }
 
-        if ($user->is_email_verified) {
+        if ($user->verification->is_email_verified) {
             return $this->returnError('EMAIL_IS_VERIFIED');
         }
 
@@ -50,6 +53,8 @@ class VerifyController extends Controller
 
         try {
             $user->sendVerificationEmail();
+            return $this->returnSuccess('EMAIL_SENT');
+
         } catch (\Exception $e) {
             return $this->returnError('SEND_EMAIL_FAILED');
         }

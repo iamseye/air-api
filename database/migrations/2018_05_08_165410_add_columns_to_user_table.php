@@ -18,6 +18,9 @@ class AddColumnsToUserTable extends Migration
             $table->integer('wallet_amount')->default(0);
             $table->string('driver_license', 15)->nullable();
             $table->string('ID_number', 10)->nullable();
+            $table->date('birth')->nullable();
+            $table->tinyInteger('gender')->default(0);
+            $table->string('address')->nullable();
         });
     }
 
@@ -33,6 +36,9 @@ class AddColumnsToUserTable extends Migration
             $table->dropColumn(['wallet_amount']);
             $table->dropColumn(['driver_license']);
             $table->dropColumn(['ID_number']);
+            $table->dropColumn('birth');
+            $table->dropColumn('gender');
+            $table->dropColumn('address');
         });
     }
 }

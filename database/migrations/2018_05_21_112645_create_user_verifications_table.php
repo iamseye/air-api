@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class AddVerifyColumnsUserTable extends Migration
+class CreateUserVerificationsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,12 +13,20 @@ class AddVerifyColumnsUserTable extends Migration
      */
     public function up()
     {
-        Schema::table('users', function (Blueprint $table) {
+        Schema::create('user_verifications', function (Blueprint $table) {
+            $table->increments('id');
+            $table->unsignedInteger('user_id')->unsigned()->nullable();
             $table->boolean('is_email_verified')->default(false);
             $table->boolean('is_phone_verified')->default(false);
             $table->boolean('is_ID_card_verified')->default(false);
             $table->boolean('is_driver_license_verified')->default(false);
             $table->boolean('is_photo_verified')->default(false);
+            $table->timestamps();
+
+            $table->foreign('user_id')
+                ->references('id')
+                ->on('users')
+                ->onDelete('set null');
         });
     }
 
@@ -29,12 +37,6 @@ class AddVerifyColumnsUserTable extends Migration
      */
     public function down()
     {
-        Schema::table('users', function (Blueprint $table) {
-            $table->dropColumn(['is_email_verified']);
-            $table->dropColumn(['is_phone_verified']);
-            $table->dropColumn(['is_ID_card_verified']);
-            $table->dropColumn(['is_driver_license_verified']);
-            $table->dropColumn(['is_photo_verified']);
-        });
+        Schema::dropIfExists('user_verifications');
     }
 }

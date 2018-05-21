@@ -16,9 +16,7 @@ trait ResponseTrait
     public function returnSuccess($message)
     {
         return response()->json([
-            'data' => [
-                'message' => $message
-            ]
+            'message' => $message
         ]);
     }
 }
