@@ -19,7 +19,7 @@ class CreateSellCarsTable extends Migration
             $table->unsignedInteger('car_id');
             $table->unsignedInteger('car_center_id');
             $table->string('accessories')->nullable();
-            $table->text('descrpition');
+            $table->text('description');
             $table->integer('buy_price');
             $table->integer('rent_price');
             $table->datetime('available_from');
