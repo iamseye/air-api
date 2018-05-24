@@ -23,8 +23,8 @@ class CreateRentOrdersTable extends Migration
             $table->string('pickup_home_city')->nullable();
             $table->string('pickup_home_area')->nullable();
             $table->string('pickup_home_address')->nullable();
-            $table->datetime('start_date');
-            $table->datetime('end_date');
+            $table->date('start_date');
+            $table->date('end_date');
             $table->datetime('pickup_time');
             $table->text('remarks')->nullable();
             $table->string('status')->default('BOOKED'); //BOOKED, IN_PROCESS, FINISHED, CANCELED

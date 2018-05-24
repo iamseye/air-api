@@ -18,14 +18,14 @@ class PromoCodesTableSeeder extends Seeder
             'code' => 'JESSIE_TEST',
             'expired_at' => 20181231,
             'amount' => 1000,
-            'percentage' => 0,
+            'remain_use_times' => 10,
         ]);
 
         PromoCode::create([
             'code' => 'JESSIE_TEST_P',
             'expired_at' => 20181231,
-            'amount' => 0,
             'percentage' => 10,
+            'remain_use_times' => 1,
         ]);
     }
 }
