@@ -10,4 +10,9 @@ class SellCar extends Model
     {
         return $this->hasMany('App\RentOrder');
     }
+
+    public function unavailableDates()
+    {
+        return $this->hasMany('App\CarUnavailableDate');
+    }
 }
