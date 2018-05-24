@@ -19,13 +19,11 @@ class CreateRentOrdersTable extends Migration
             $table->unsignedInteger('sell_car_id');
             $table->unsignedInteger('rent_invoice_id');
             $table->unsignedInteger('rent_extend_invoice_id');
-            $table->boolean(' is_pickup_at_car_center')->default(false);
             $table->string('pickup_home_city')->nullable();
             $table->string('pickup_home_area')->nullable();
             $table->string('pickup_home_address')->nullable();
-            $table->date('start_date');
-            $table->date('end_date');
-            $table->datetime('pickup_time');
+            $table->dateTime('start_date');
+            $table->dateTime('end_date');
             $table->text('remarks')->nullable();
             $table->string('status')->default('BOOKED'); //BOOKED, IN_PROCESS, FINISHED, CANCELED
             $table->timestamps();

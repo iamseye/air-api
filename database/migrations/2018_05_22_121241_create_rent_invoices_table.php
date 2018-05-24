@@ -15,15 +15,15 @@ class CreateRentInvoicesTable extends Migration
     {
         Schema::create('rent_invoices', function (Blueprint $table) {
             $table->increments('id');
-            $table->unsignedInteger('insurance_id');
-            $table->unsignedInteger('promo_code_id');
             $table->integer('rent_price');
             $table->integer('rent_days');
-            $table->integer('discount');
+            $table->integer('pickup_price');
+            $table->integer('insurance_price');
+            $table->integer('promo_code_discount');
+            $table->integer('long_rent_discount');
+            $table->integer('emergency_fee');
             $table->integer('total_price');
-            $table->unsignedInteger('payment_id')->nullable(); //if using bind payment
-            $table->string('payment_name')->nullable();
-            $table->string('payment_account')->nullable();
+            $table->string('payment_token')->nullable();
             $table->timestamps();
         });
     }

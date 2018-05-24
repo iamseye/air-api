@@ -15,7 +15,7 @@ class AddColumnsToUserTable extends Migration
     {
         Schema::table('users', function (Blueprint $table) {
             $table->boolean('is_seller')->default(false);
-            $table->integer('wallet_amount')->default(0);
+            $table->integer('point_amount')->default(0);
             $table->string('driver_license', 15)->nullable();
             $table->string('ID_number', 10)->nullable();
             $table->date('birth')->nullable();
@@ -35,7 +35,7 @@ class AddColumnsToUserTable extends Migration
     {
         Schema::table('users', function (Blueprint $table) {
             $table->dropColumn(['is_seller']);
-            $table->dropColumn(['wallet_amount']);
+            $table->dropColumn(['point_amount']);
             $table->dropColumn(['driver_license']);
             $table->dropColumn(['ID_number']);
             $table->dropColumn('birth');
