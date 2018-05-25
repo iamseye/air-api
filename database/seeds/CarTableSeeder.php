@@ -15,7 +15,8 @@ class CarTableSeeder extends Seeder
         Car::truncate();
 
         Car::create([
-            'brand' => 'Benz 賓士',
+            'brand' => 'Benz',
+            'brand_ch' => '賓士',
             'series' => 'C',
             'series_model' => 'C250',
             'vehicle_type' => '轎車',
@@ -23,7 +24,8 @@ class CarTableSeeder extends Seeder
         ]);
 
         Car::create([
-            'brand' => 'BMW 寶馬',
+            'brand' => 'BMW',
+            'brand_ch' => '寶馬',
             'series' => 'Z',
             'series_model' => 'Z4',
             'vehicle_type' => '轎車',

@@ -15,4 +15,15 @@ class SellCar extends Model
     {
         return $this->hasMany('App\CarUnavailableDate');
     }
+
+    public function carCenter()
+    {
+        return $this->belongsTo('App\CarCenter');
+    }
+
+    public function car()
+    {
+        return $this->belongsTo('App\Car');
+    }
+
 }
