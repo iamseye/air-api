@@ -136,7 +136,7 @@ class RentOrderController extends Controller
         $rentDays = $startDate->diffInDays($endDate);
 
         $insurancePrice = $this->getInsurancePrice($rentPrice, $rentDays);
-        $emergencyFee = $this->getEmergencyFee();
+        $emergencyFee = $this->getEmergencyFee($rentPrice, $startDate);
         $longRentDiscount = $this->getLongRentDiscount($rentPrice, $rentDays);
 
         $promoCodeDiscount = 0;
@@ -196,9 +196,21 @@ class RentOrderController extends Controller
         }
     }
 
-    public function getEmergencyFee()
+    public function getEmergencyFee($rentPrice, $startDate)
     {
-        return 0;
+
+        $maxDays = 3;
+        $emergencyDays =  $maxDays - Carbon::now()->diffInDays($startDate);
+
+        if ($emergencyDays > 3) {
+            $emergencyDays = 3;
+        }
+
+        if ($emergencyDays < 0) {
+            $emergencyDays = 0;
+        }
+
+        return $rentPrice * 0.15 * $emergencyDays;
     }
 
     public function getInsurancePrice($rent_price, $rent_days)
