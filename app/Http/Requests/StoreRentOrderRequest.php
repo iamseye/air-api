@@ -24,19 +24,12 @@ class StoreRentOrderRequest extends FormRequest
     public function rules()
     {
         return [
-            'user_id' => 'required|integer',
             'sell_car_id' => 'required|integer',
-            'is_pickup_at_car_center' => 'boolean',
-            'pickup_home_city' => 'string',
-            'pickup_home_area' => 'string',
             'pickup_home_address' => 'string',
-            'start_date' => 'required|date',
-            'end_date' => 'required|date',
-            'pickup_time' => 'required',
-            'remarks' => 'string',
-            'status' => 'string',
+            'start_date' => 'required',
+            'end_date' => 'required',
             'promo_code' => 'string',
-            'insurance_id' => 'integer'
+
         ];
     }
 }

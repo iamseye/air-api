@@ -38,16 +38,6 @@ class RentOrderController extends Controller
         $order->end_date = date('Y-m-d', strtotime($request->end_date));
         $order->pickup_time = date('Y-m-d H:i:s', strtotime($request->start_date.$request->pickup_time));
 
-        $invoice = $this->createInvoice($request);
-
-        $order->rent_invoice_id = $invoice->id;
-
-        $order->save();
-
-    }
-
-    public function createInvoice(StoreRentOrderRequest $request)
-    {
         $car = SellCar::findOrFail($request->sell_car_id);
 
         $invoice = new RentInvoice();
@@ -69,7 +59,9 @@ class RentOrderController extends Controller
 
         $invoice->save();
 
-        return $invoice;
+        $order->rent_invoice_id = $invoice->id;
+        $order->save();
+
     }
 
     public function isCarAvailable($carId, $startDate, $endDate)
@@ -106,10 +98,6 @@ class RentOrderController extends Controller
 
         return false;
     }
-
-
-
-
 
 
     public function getPaymentDetail(GetPaymentDetailRequest $request)
