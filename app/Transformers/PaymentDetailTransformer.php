@@ -7,19 +7,19 @@ class PaymentDetailTransformer extends \League\Fractal\TransformerAbstract
     public function transform($paymentDetail)
     {
         return [
-            'car_year' => $paymentDetail->carYear,
-            'car_name' => $paymentDetail->carName,
-            'start_date' => $paymentDetail->startDate,
-            'end_date' => $paymentDetail->endDate,
-            'pickup_place' => $paymentDetail->pickUpPlace,
-            'pickup_price' => $paymentDetail->pickUpPrice,
-            'rent_days' => $paymentDetail->rentDays,
-            'insurance_price' => $paymentDetail->insurancePrice,
-            'emergency_fee' => $paymentDetail->emergencyFee,
-            'promo_code_discount' => $paymentDetail->promoCodeDiscount,
-            'long_rent_discount' => $paymentDetail->longRentDiscount,
-            'rent_price' => $paymentDetail->rentPrice,
-            'total_price' => $paymentDetail->totalPrice
+            'car_year' => $paymentDetail->car_year,
+            'car_name' => $paymentDetail->car_name,
+            'start_date' => $paymentDetail->start_date,
+            'end_date' => $paymentDetail->end_date,
+            'pickup_place' => $paymentDetail->pickup_place,
+            'pickup_price' => $paymentDetail->pickup_price,
+            'rent_days' => $paymentDetail->rent_days,
+            'insurance_price' => $paymentDetail->insurance_price,
+            'emergency_fee' => $paymentDetail->emergency_fee,
+            'promo_code_discount' => $paymentDetail->promo_code_discount,
+            'long_rent_discount' => $paymentDetail->long_rent_discount,
+            'rent_price' => $paymentDetail->rent_price,
+            'total_price' => $paymentDetail->total_price
         ];
     }
 }

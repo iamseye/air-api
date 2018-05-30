@@ -25,14 +25,15 @@ class RentOrderController extends Controller
         $endDate = Carbon::createFromTimestamp($request->end_date);
         $rentDays = $startDate->diffInDays($endDate);
 
-        if (!$this->isCarAvailable($request->sell_car_id, $startDate->toDateTimeString(), $endDate->toDateTimeString())) {
-            return $this->returnError('體驗日期不在車子可以的範圍內');
+        if ($startDate < Carbon::now()) {
+            return $this->returnError('體驗開始日期已過!');
         }
 
-        if ($request->promo_code !=null) {
-            if (!$this->isPromoCodeValid($request->promo_code)) {
-                return $this->returnError('此優惠代碼無效或已超過使用次數');
-            }
+        $startDate = $startDate->toDateTimeString();
+        $endDate = $endDate->toDateTimeString();
+
+        if (!$this->isCarAvailable($request->sell_car_id, $startDate, $endDate)) {
+            return $this->returnError('體驗日期不在車子可以的範圍內');
         }
 
         $sellCar = SellCar::findOrFail($request->sell_car_id);
@@ -40,6 +41,14 @@ class RentOrderController extends Controller
 
         $order = new RentOrder();
         $order->pickup_price = 0;
+        $order->promo_code_discount = 0;
+
+        if ($request->promo_code !=null) {
+            if (!$this->isPromoCodeValid($request->promo_code)) {
+                return $this->returnError('此優惠代碼無效或已超過使用次數');
+            }
+            $order->promo_code_discount = $this->getPromoCodeDiscount($rentPrice, $request->promo_code);
+        }
 
         if ($request->pickup_home_address !== null) {
             $distance = $this->getKmDistance($request->pickup_home_address, $sellCar->carCenter->address);
@@ -52,16 +61,12 @@ class RentOrderController extends Controller
             $order->pickup_price = $this->getPickUpPrice($rentPrice, $distance);
         }
 
-        if ($request->promo_code !== null) {
-            $order->promo_code_discount = $this->getPromoCodeDiscount($rentPrice, $request->promo_code);
-        }
-
         $order->user_id = $request->user_id;
         $order->sell_car_id = $request->sell_car_id;
-        $order->start_date = Carbon::createFromTimestamp($request->start_date)->toDateTimeString();
-        $order->end_date = Carbon::createFromTimestamp($request->end_date)->toDateTimeString();
+        $order->start_date = $request->start_date;
+        $order->end_date = $request->end_date;
         $order->rent_days = $rentDays;
-        $order->insurance_price = $this->getInsurancePrice($rentPrice, $rentDays);
+        $order->insurance_price = $request->buy_insurance ? $this->getInsurancePrice($rentPrice, $rentDays) : 0;
         $order->long_rent_discount = $this->getLongRentDiscount($rentPrice, $rentDays);
         $order->emergency_fee = $this->getEmergencyFee($rentPrice, $startDate);
         $order->total_price = $this->getTotalPrice(
@@ -120,51 +125,64 @@ class RentOrderController extends Controller
 
     public function getPaymentDetail(GetPaymentDetailRequest $request)
     {
-        $sellCar = SellCar::findOrFail($request->sell_car_id);
-        $rentPrice = $sellCar->rent_price;
-
-        if ($request->pickup_home_address !== null) {
-            $pickUpPlace = $request->pickup_home_address;
-            $distance = $this->getKmDistance($request->pickup_home_address, $sellCar->carCenter->address);
-
-            if ($distance == 'GOOGLE_API_ERROR') {
-                $this->returnError('輸入地址格式錯誤');
-            }
-
-            $pickUpPrice = $this->getPickUpPrice($rentPrice, $distance);
-        } else {
-            $pickUpPrice = 0;
-            $pickUpPlace = $sellCar->carCenter->address;
-        }
-
         $startDate = Carbon::createFromTimestamp($request->start_date);
         $endDate = Carbon::createFromTimestamp($request->end_date);
         $rentDays = $startDate->diffInDays($endDate);
 
-        $insurancePrice = $this->getInsurancePrice($rentPrice, $rentDays);
-        $emergencyFee = $this->getEmergencyFee($rentPrice, $startDate);
-        $longRentDiscount = $this->getLongRentDiscount($rentPrice, $rentDays);
-
-        $promoCodeDiscount = 0;
-        if ($request->promo_code !== null) {
-            $promoCodeDiscount = $this->getPromoCodeDiscount($rentPrice, $request->promo_code);
+        if ($startDate < Carbon::now()) {
+            return $this->returnError('體驗開始日期已過!');
         }
 
+        $startDate = $startDate->toDateTimeString();
+        $endDate = $endDate->toDateTimeString();
+
+        if (!$this->isCarAvailable($request->sell_car_id, $startDate, $endDate)) {
+            return $this->returnError('體驗日期不在車子可以的範圍內');
+        }
+
+        $sellCar = SellCar::findOrFail($request->sell_car_id);
+        $rentPrice = $sellCar->rent_price;
+
         $paymentDetail=  new \stdClass();
-        $paymentDetail->carYear = $sellCar->car->year;
-        $paymentDetail->carName = $sellCar->car->brand . ' ' . $sellCar->car->series_model;
-        $paymentDetail->startDate = $request->start_date;
-        $paymentDetail->endDate = $request->end_date;
-        $paymentDetail->pickUpPlace = $pickUpPlace;
-        $paymentDetail->rentDays = $rentDays;
-        $paymentDetail->insurancePrice = $insurancePrice;
-        $paymentDetail->emergencyFee = $emergencyFee;
-        $paymentDetail->pickUpPrice = $pickUpPrice;
-        $paymentDetail->promoCodeDiscount = $promoCodeDiscount;
-        $paymentDetail->longRentDiscount = $longRentDiscount;
-        $paymentDetail->rentPrice = $sellCar->rent_price;
-        $paymentDetail->totalPrice =
-            $this->getTotalPrice($rentPrice, $rentDays, $insurancePrice, $emergencyFee,$longRentDiscount + $promoCodeDiscount);
+        $paymentDetail->pickup_price = 0;
+        $paymentDetail->promo_code_discount = 0;
+
+        if ($request->promo_code !=null) {
+            if (!$this->isPromoCodeValid($request->promo_code)) {
+                return $this->returnError('此優惠代碼無效或已超過使用次數');
+            }
+            $paymentDetail->promo_code_discount = $this->getPromoCodeDiscount($rentPrice, $request->promo_code);
+        }
+
+        if ($request->pickup_home_address !== null) {
+            $distance = $this->getKmDistance($request->pickup_home_address, $sellCar->carCenter->address);
+
+            if ($distance === 'GOOGLE_API_ERROR') {
+                return $this->returnError('輸入地址格式錯誤');
+            }
+
+            $paymentDetail->pickup_place = $request->pickup_home_address;
+            $paymentDetail->pickup_price = $this->getPickUpPrice($rentPrice, $distance);
+        } else {
+            $paymentDetail->pickup_place = $sellCar->carCenter->address;
+        }
+
+        $paymentDetail->car_year = $sellCar->car->year;
+        $paymentDetail->car_name = $sellCar->car->brand . ' ' . $sellCar->car->series_model;
+        $paymentDetail->start_date = $request->start_date;
+        $paymentDetail->end_date = $request->end_date;
+        $paymentDetail->rent_days = $rentDays;
+        $paymentDetail->insurance_price = $this->getInsurancePrice($rentPrice, $rentDays);
+        $paymentDetail->emergency_fee = $this->getEmergencyFee($rentPrice, $startDate);
+        $paymentDetail->long_rent_discount = $this->getLongRentDiscount($rentPrice, $rentDays);
+        $paymentDetail->rent_price = $rentPrice;
+        $paymentDetail->total_price = $this->getTotalPrice(
+            $rentPrice,
+            $rentDays,
+            $paymentDetail->insurance_price,
+            $paymentDetail->emergency_fee,
+            $paymentDetail->promo_code_discount + $paymentDetail->long_rent_discount
+        );
 
         return fractal()
             ->item($paymentDetail)
@@ -195,6 +213,9 @@ class RentOrderController extends Controller
             ->where('remain_use_times', '>', 0)
             ->first();
 
+        $promoCode->remain_use_times -= 1;
+        $promoCode->save();
+
         if ($promoCode->amount !== 0) {
             return $promoCode->amount;
         } else {
@@ -204,7 +225,6 @@ class RentOrderController extends Controller
 
     public function getEmergencyFee($rentPrice, $startDate)
     {
-
         $maxDays = 3;
         $emergencyDays =  $maxDays - Carbon::now()->diffInDays($startDate);
 
@@ -242,10 +262,10 @@ class RentOrderController extends Controller
             ]);
 
             $responseData = json_decode($response->getBody()->getContents());
-
             return intval($responseData->rows[0]->elements[0]->distance->value/1000);
 
         } catch (\Exception $exception) {
+            var_dump($exception);
             return 'GOOGLE_API_ERROR';
         }
     }

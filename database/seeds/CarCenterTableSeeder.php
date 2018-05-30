@@ -26,7 +26,7 @@ class CarCenterTableSeeder extends Seeder
             'name' => '交車站1',
             'area' => '台中',
             'phone_number' => $faker->phoneNumber,
-            'address' => $faker->address
+            'address' => '台中市正氣街52號'
         ]);
 
         CarCenter::create([
