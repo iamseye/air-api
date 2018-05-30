@@ -8,7 +8,7 @@ trait ResponseTrait
     {
         return response()->json([
             'status' => 'error',
-            'message' => '$errorMessage'
+            'message' => $errorMessage
         ]);
     }
 

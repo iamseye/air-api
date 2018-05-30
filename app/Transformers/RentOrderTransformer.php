@@ -11,8 +11,14 @@ class RentOrderTransformer extends \League\Fractal\TransformerAbstract
         return [
             'id' => $order->id,
             'start_date' => $order->start_date,
-            'end_date' => $order->start_date,
-            'extend_date' => $order->start_date
+            'end_date' => $order->end_date,
+            'pickup_price' => $order->pickup_price,
+            'rent_days' => $order->rent_days,
+            'insurance_price' => $order->insurance_price,
+            'emergency_fee' => $order->emergency_fee,
+            'promo_code_discount' => $order->promo_code_discount,
+            'long_rent_discount' => $order->long_rent_discount,
+            'total_price' => $order->total_price
         ];
     }
 }

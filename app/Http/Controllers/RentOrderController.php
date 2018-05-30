@@ -10,6 +10,7 @@ use App\SellCar;
 use App\Http\Requests\StoreRentOrderRequest;
 use App\Http\Requests\GetPaymentDetailRequest;
 use App\Traits\ResponseTrait;
+use App\Transformers\RentOrderTransformer;
 use Carbon\Carbon;
 use GuzzleHttp\Client;
 use App\Transformers\PaymentDetailTransformer;
@@ -20,7 +21,11 @@ class RentOrderController extends Controller
 
     public function store(StoreRentOrderRequest $request)
     {
-        if (!$this->isCarAvailable($request->sell_car_id, $request->start_date, $request->end_date)) {
+        $startDate = Carbon::createFromTimestamp($request->start_date);
+        $endDate = Carbon::createFromTimestamp($request->end_date);
+        $rentDays = $startDate->diffInDays($endDate);
+
+        if (!$this->isCarAvailable($request->sell_car_id, $startDate->toDateTimeString(), $endDate->toDateTimeString())) {
             return $this->returnError('體驗日期不在車子可以的範圍內');
         }
 
@@ -30,46 +35,59 @@ class RentOrderController extends Controller
             }
         }
 
+        $sellCar = SellCar::findOrFail($request->sell_car_id);
+        $rentPrice = $sellCar->rent_price;
+
         $order = new RentOrder();
-        $order->user_id = $request->user_id;
-        $order->sell_car_id = $request->sell_car_id;
-        $order->is_pickup_at_car_center = $request->is_pickup_at_car_center;
-        $order->start_date = date('Y-m-d', strtotime($request->start_date));
-        $order->end_date = date('Y-m-d', strtotime($request->end_date));
-        $order->pickup_time = date('Y-m-d H:i:s', strtotime($request->start_date.$request->pickup_time));
+        $order->pickup_price = 0;
 
-        $car = SellCar::findOrFail($request->sell_car_id);
+        if ($request->pickup_home_address !== null) {
+            $distance = $this->getKmDistance($request->pickup_home_address, $sellCar->carCenter->address);
 
-        $invoice = new RentInvoice();
-        $invoice->rent_price = $car->rent_price;
-        $invoice->rent_days = $request->end_date - $request->start_date + 1;
-        $invoice->insurance_id = $request->insurance_id;
-        $invoice->discount = $this->getRentDiscount($invoice->rent_price, $invoice->rent_days);
+            if ($distance == 'GOOGLE_API_ERROR') {
+                $this->returnError('輸入地址格式錯誤');
+            }
 
-        if ($request->promo_code !=null) {
-            $invoice->promo_code_amount = $this->getPromoCodeAmount($request->promo_code);
-            $invoice->promo_code = $request->promo_code;
+            $order->pickup_home_address = $request->pickup_home_address;
+            $order->pickup_price = $this->getPickUpPrice($rentPrice, $distance);
         }
 
-        $insurance_price = Insurance::findOrFail($request->insurance_id);
-        $invoice->total_amount = ($invoice->rent_price * $invoice->rent_days)
-            - $invoice->discount
-            - $invoice->promo_code_amount
-            - $insurance_price;
+        if ($request->promo_code !== null) {
+            $order->promo_code_discount = $this->getPromoCodeDiscount($rentPrice, $request->promo_code);
+        }
 
-        $invoice->save();
-
-        $order->rent_invoice_id = $invoice->id;
+        $order->user_id = $request->user_id;
+        $order->sell_car_id = $request->sell_car_id;
+        $order->start_date = Carbon::createFromTimestamp($request->start_date)->toDateTimeString();
+        $order->end_date = Carbon::createFromTimestamp($request->end_date)->toDateTimeString();
+        $order->rent_days = $rentDays;
+        $order->insurance_price = $this->getInsurancePrice($rentPrice, $rentDays);
+        $order->long_rent_discount = $this->getLongRentDiscount($rentPrice, $rentDays);
+        $order->emergency_fee = $this->getEmergencyFee($rentPrice, $startDate);
+        $order->total_price = $this->getTotalPrice(
+            $rentPrice,
+            $rentDays,
+            $order->insurance_price,
+            $order->emergency_fee,
+            $order->promo_code_discount + $order->long_rent_discount
+        );
         $order->save();
 
+        return fractal()
+            ->item($order)
+            ->transformWith(new RentOrderTransformer())
+            ->toArray();
     }
 
+    /**
+     * @param $carId
+     * @param DateTimeString $startDate
+     * @param DateTimeString $endDate
+     * @return bool
+     */
     public function isCarAvailable($carId, $startDate, $endDate)
     {
         $car = SellCar::findOrFail($carId);
-
-        $startDate = date('Y-m-d', strtotime($startDate));
-        $endDate = date('Y-m-d', strtotime($endDate));
 
         if ($startDate < $car->available_from || $endDate > $car->available_to) {
             return false;
