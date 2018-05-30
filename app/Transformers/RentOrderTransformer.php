@@ -6,6 +6,10 @@ use App\RentOrder;
 
 class RentOrderTransformer extends \League\Fractal\TransformerAbstract
 {
+    protected $availableIncludes = [
+        'sell_car',
+    ];
+
     public function transform(RentOrder $order)
     {
         return [
@@ -20,5 +24,10 @@ class RentOrderTransformer extends \League\Fractal\TransformerAbstract
             'long_rent_discount' => $order->long_rent_discount,
             'total_price' => $order->total_price
         ];
+    }
+
+    public function includeSellCar(RentOrder $order)
+    {
+        return $this->item($order->sellCar, new SellCarTransformer());
     }
 }

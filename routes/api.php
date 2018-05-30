@@ -34,6 +34,7 @@ Route::group(['middleware' => 'auth:api'], function () {
     Route::put('user/{id}', 'UserController@update')->name('user.update');
     Route::post('upload-verify-photo/{id}', 'UserController@uploadVerifyPhoto')->name('user.uploadVerifyPhoto');
     Route::post('create-rent-order', 'RentOrderController@store')->name('rentOrder.store');
+    Route::post('extend-rent-order', 'RentOrderController@extendRentOrder')->name('rentOrder.extendRentOrder');
     Route::post('car-unavailable', 'SellCarController@setCarUnavailable')->name('sellCarUnavailable.store');
     Route::post('get-payment-detail', 'RentOrderController@getPaymentDetail')->name('rentOrder.getPaymentDetail');
 });

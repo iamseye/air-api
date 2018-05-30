@@ -17,6 +17,7 @@ class SellCarTransformer extends \League\Fractal\TransformerAbstract
             'id' => $sellCar->id,
             'available_from' => $sellCar->available_from,
             'available_to' => $sellCar->available_to,
+            'rent_price' => $sellCar->rent_price
         ];
     }
 

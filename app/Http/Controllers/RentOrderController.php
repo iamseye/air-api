@@ -2,18 +2,21 @@
 
 namespace App\Http\Controllers;
 
-use App\Insurance;
-use App\PromoCode;
-use App\RentOrder;
-use App\RentInvoice;
-use App\SellCar;
+
+use App\Car;
+use App\ExtendRentOrder;
+use App\Http\Requests\ExtendRentOrderRequest;
 use App\Http\Requests\StoreRentOrderRequest;
 use App\Http\Requests\GetPaymentDetailRequest;
+use App\Transformers\ExtendRentOrderTransformer;
+use App\PromoCode;
+use App\RentOrder;
+use App\SellCar;
 use App\Traits\ResponseTrait;
 use App\Transformers\RentOrderTransformer;
+use App\Transformers\PaymentDetailTransformer;
 use Carbon\Carbon;
 use GuzzleHttp\Client;
-use App\Transformers\PaymentDetailTransformer;
 
 class RentOrderController extends Controller
 {
@@ -28,9 +31,6 @@ class RentOrderController extends Controller
         if ($startDate < Carbon::now()) {
             return $this->returnError('體驗開始日期已過!');
         }
-
-        $startDate = $startDate->toDateTimeString();
-        $endDate = $endDate->toDateTimeString();
 
         if (!$this->isCarAvailable($request->sell_car_id, $startDate, $endDate)) {
             return $this->returnError('體驗日期不在車子可以的範圍內');
@@ -63,8 +63,8 @@ class RentOrderController extends Controller
 
         $order->user_id = $request->user_id;
         $order->sell_car_id = $request->sell_car_id;
-        $order->start_date = $request->start_date;
-        $order->end_date = $request->end_date;
+        $order->start_date = $startDate->toDateTimeString();
+        $order->end_date = $endDate->toDateTimeString();
         $order->rent_days = $rentDays;
         $order->insurance_price = $request->buy_insurance ? $this->getInsurancePrice($rentPrice, $rentDays) : 0;
         $order->long_rent_discount = $this->getLongRentDiscount($rentPrice, $rentDays);
@@ -80,8 +80,77 @@ class RentOrderController extends Controller
 
         return fractal()
             ->item($order)
+            ->parseIncludes(['sell_car'])
             ->transformWith(new RentOrderTransformer())
             ->toArray();
+    }
+
+    public function extendRentOrder(ExtendRentOrderRequest $request)
+    {
+        $order = RentOrder::findOrFail($request->rent_order_id);
+        $sellCar = $order->sellCar;
+
+        $rentPrice = $sellCar->rent_price;
+
+        $startDate = Carbon::createFromTimestamp(strtotime($order->end_date));
+        $endDate = Carbon::createFromTimestamp($request->end_date);
+        $rentDays = $startDate->diffInDays($endDate);
+
+        if ($startDate < Carbon::now()) {
+            return $this->returnError('體驗開始日期已過!');
+        }
+
+        if (!$this->isExtendCarAvailable($sellCar->id, $startDate, $endDate)) {
+            return $this->returnError('體驗日期不在車子可以的範圍內');
+        }
+
+        $extendOrder = new ExtendRentOrder();
+        $extendOrder->rent_order_id = $request->rent_order_id;
+        $extendOrder->start_date = $startDate->toDateTimeString();
+        $extendOrder->end_Date = $endDate->toDateTimeString();
+        $extendOrder->rent_days = $rentDays;
+        $extendOrder->insurance_price = $request->buy_insurance ? $this->getInsurancePrice($rentPrice, $rentDays) : 0;
+        $extendOrder->total_price = $this->getTotalPrice(
+            $rentPrice,
+            $rentDays,
+            $extendOrder->insurance_price,
+            0,
+            0
+        );
+
+        $extendOrder->save();
+
+        return fractal()
+            ->item($extendOrder)
+            ->transformWith(new ExtendRentOrderTransformer())
+            ->toArray();
+    }
+
+    /**
+     * @param $carId
+     * @param carbon $startDate
+     * @param carbon $endDate
+     * @return bool
+     */
+    public function isCarAvailable($carId, $startDate, $endDate)
+    {
+        $car = SellCar::findOrFail($carId);
+
+        $startDate = $startDate->toDateTimeString();
+        $endDate = $endDate->toDateTimeString();
+
+        if ($startDate < $car->available_from || $endDate > $car->available_to) {
+            return false;
+        }
+
+        // check whether overlapping other orders
+        foreach ($car->rentOrders as $order) {
+            if ($startDate <= $order->end_date && $endDate >= $order->start_date) {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     /**
@@ -90,9 +159,12 @@ class RentOrderController extends Controller
      * @param DateTimeString $endDate
      * @return bool
      */
-    public function isCarAvailable($carId, $startDate, $endDate)
+    public function isExtendCarAvailable($carId, $startDate, $endDate)
     {
         $car = SellCar::findOrFail($carId);
+
+        $startDate = Carbon::createFromFormat('Y-m-d H:i:s', $startDate)->addDay();
+        $startDate = $startDate->toDateTimeString();
 
         if ($startDate < $car->available_from || $endDate > $car->available_to) {
             return false;
