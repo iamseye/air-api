@@ -3,8 +3,8 @@
 namespace App\Http\Controllers;
 
 
-use App\Car;
 use App\ExtendRentOrder;
+use App\Http\Requests\CancelOrderRequest;
 use App\Http\Requests\ExtendRentOrderRequest;
 use App\Http\Requests\StoreRentOrderRequest;
 use App\Http\Requests\GetPaymentDetailRequest;
@@ -126,75 +126,6 @@ class RentOrderController extends Controller
             ->toArray();
     }
 
-    /**
-     * @param $carId
-     * @param carbon $startDate
-     * @param carbon $endDate
-     * @return bool
-     */
-    public function isCarAvailable($carId, $startDate, $endDate)
-    {
-        $car = SellCar::findOrFail($carId);
-
-        $startDate = $startDate->toDateTimeString();
-        $endDate = $endDate->toDateTimeString();
-
-        if ($startDate < $car->available_from || $endDate > $car->available_to) {
-            return false;
-        }
-
-        // check whether overlapping other orders
-        foreach ($car->rentOrders as $order) {
-            if ($startDate <= $order->end_date && $endDate >= $order->start_date) {
-                return false;
-            }
-        }
-
-        return true;
-    }
-
-    /**
-     * @param $carId
-     * @param DateTimeString $startDate
-     * @param DateTimeString $endDate
-     * @return bool
-     */
-    public function isExtendCarAvailable($carId, $startDate, $endDate)
-    {
-        $car = SellCar::findOrFail($carId);
-
-        $startDate = Carbon::createFromFormat('Y-m-d H:i:s', $startDate)->addDay();
-        $startDate = $startDate->toDateTimeString();
-
-        if ($startDate < $car->available_from || $endDate > $car->available_to) {
-            return false;
-        }
-
-        // check whether overlapping other orders
-        foreach ($car->rentOrders as $order) {
-            if ($startDate <= $order->end_date && $endDate >= $order->start_date) {
-                return false;
-            }
-        }
-
-        return true;
-    }
-
-    public function isPromoCodeValid($promoCode)
-    {
-        $promoCode = PromoCode::where('code', '=', $promoCode)
-            ->where('expired_at', '>=', Carbon::now())
-            ->where('remain_use_times', '>', 0)
-            ->first();
-
-        if ($promoCode) {
-            return true;
-        }
-
-        return false;
-    }
-
-
     public function getPaymentDetail(GetPaymentDetailRequest $request)
     {
         $startDate = Carbon::createFromTimestamp($request->start_date);
@@ -261,6 +192,92 @@ class RentOrderController extends Controller
             ->transformWith(new PaymentDetailTransformer())
             ->toArray();
     }
+
+    public function cancelOrder(CancelOrderRequest $request)
+    {
+        $order = RentOrder::findOrFail($request->rent_order_id);
+
+        if ($order->status !== 'BOOKED') {
+            return $this->returnError('目前訂單狀態不可取消');
+        }
+
+        $order->status = "CANCELLED";
+        $order->save();
+
+        return fractal()
+            ->item($order)
+            ->transformWith(new RentOrderTransformer())
+            ->toArray();
+    }
+
+    /**
+     * @param $carId
+     * @param carbon $startDate
+     * @param carbon $endDate
+     * @return bool
+     */
+    public function isCarAvailable($carId, $startDate, $endDate)
+    {
+        $car = SellCar::findOrFail($carId);
+
+        $startDate = $startDate->toDateTimeString();
+        $endDate = $endDate->toDateTimeString();
+
+        if ($startDate < $car->available_from || $endDate > $car->available_to) {
+            return false;
+        }
+
+        // check whether overlapping other orders
+        foreach ($car->rentOrders as $order) {
+            if ($startDate <= $order->end_date && $endDate >= $order->start_date) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    /**
+     * @param $carId
+     * @param carbon $startDate
+     * @param carbon $endDate
+     * @return bool
+     */
+    public function isExtendCarAvailable($carId, $startDate, $endDate)
+    {
+        $car = SellCar::findOrFail($carId);
+
+        $startDate = Carbon::createFromFormat('Y-m-d H:i:s', $startDate)->addDay();
+        $startDate = $startDate->toDateTimeString();
+
+        if ($startDate < $car->available_from || $endDate > $car->available_to) {
+            return false;
+        }
+
+        // check whether overlapping other orders
+        foreach ($car->rentOrders as $order) {
+            if ($startDate <= $order->end_date && $endDate >= $order->start_date) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    public function isPromoCodeValid($promoCode)
+    {
+        $promoCode = PromoCode::where('code', '=', $promoCode)
+            ->where('expired_at', '>=', Carbon::now())
+            ->where('remain_use_times', '>', 0)
+            ->first();
+
+        if ($promoCode) {
+            return true;
+        }
+
+        return false;
+    }
+
 
     public function getTotalPrice($rentPrice, $rentDays, $insurancePrice, $emergencyFee, $totalDiscount)
     {

@@ -22,7 +22,8 @@ class RentOrderTransformer extends \League\Fractal\TransformerAbstract
             'emergency_fee' => $order->emergency_fee,
             'promo_code_discount' => $order->promo_code_discount,
             'long_rent_discount' => $order->long_rent_discount,
-            'total_price' => $order->total_price
+            'total_price' => $order->total_price,
+            'status' => $order->status
         ];
     }
 
