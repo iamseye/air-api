@@ -9,6 +9,7 @@ use App\Http\Requests\ExtendRentOrderRequest;
 use App\Http\Requests\StoreRentOrderRequest;
 use App\Http\Requests\GetPaymentDetailRequest;
 use App\Transformers\ExtendRentOrderTransformer;
+use App\Point;
 use App\PromoCode;
 use App\RentOrder;
 use App\SellCar;
@@ -193,7 +194,7 @@ class RentOrderController extends Controller
             ->toArray();
     }
 
-    public function cancelOrder(CancelOrderRequest $request)
+    public function userCancelOrder(CancelOrderRequest $request)
     {
         $order = RentOrder::findOrFail($request->rent_order_id);
 
@@ -201,13 +202,49 @@ class RentOrderController extends Controller
             return $this->returnError('目前訂單狀態不可取消');
         }
 
-        $order->status = "CANCELLED";
+        $order->status = 'CANCELLED';
         $order->save();
+
+        $extendOrderPrice = 0;
+        foreach ($order->extendRentOrders as $extendOrder) {
+            $extendOrder->status = 'CANCELLED';
+            $extendOrder->save();
+
+            $extendOrderPrice += $extendOrder->total_price;
+        }
+
+        $this->userCancelReturn($order->user_id, $order->start_date, $order->total_price + $extendOrderPrice);
 
         return fractal()
             ->item($order)
             ->transformWith(new RentOrderTransformer())
             ->toArray();
+    }
+
+    public function userCancelReturn($userId, $orderStartDate, $totalPrice)
+    {
+        $orderStartDate = Carbon::createFromFormat('Y-m-d H:i:s', $orderStartDate);
+        $cancelBeforeDays = Carbon::now()->diffInDays($orderStartDate);
+
+        $point = new Point();
+        $point->user_id = $userId;
+        $point->title = '訂單退款';
+
+        if ($cancelBeforeDays >= 14) {
+            $point->amount = $totalPrice;
+        } elseif ($cancelBeforeDays >= 10 && $cancelBeforeDays < 14) {
+            $point->amount = $totalPrice * 0.7;
+        } elseif ($cancelBeforeDays >= 7 && $cancelBeforeDays < 10) {
+            $point->amount = $totalPrice * 0.5;
+        } elseif ($cancelBeforeDays >= 4 && $cancelBeforeDays < 7) {
+            $point->amount = $totalPrice * 0.4;
+        } elseif ($cancelBeforeDays >= 2 && $cancelBeforeDays < 4) {
+            $point->amount = $totalPrice * 0.3;
+        } elseif ($cancelBeforeDays == 1) {
+            $point->amount = $totalPrice * 0.2;
+        }
+
+        $point->save();
     }
 
     /**

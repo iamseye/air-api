@@ -60,4 +60,9 @@ class User extends Authenticatable
     {
         return $this->hasOne('App\PhoneVerifyCode', 'mobile', 'mobile');
     }
+
+    public function points()
+    {
+        return $this->hasMany('App\Point');
+    }
 }
