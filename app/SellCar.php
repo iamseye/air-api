@@ -3,9 +3,12 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+use App\Traits\OrderableTrait;
 
 class SellCar extends Model
 {
+    use OrderableTrait;
+
     public function rentOrders()
     {
         return $this->hasMany('App\RentOrder');

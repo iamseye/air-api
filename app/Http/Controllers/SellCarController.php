@@ -15,14 +15,24 @@ class SellCarController extends Controller
 
     public function index()
     {
-        $topics = SellCar::latestFirst()->paginate(10);
-        $topicsCollection = $topics->getCollection();
+        $carsCollection = SellCar::latestFirst()->where('active', 1)->get();
 
+        return fractal()
+            ->collection($carsCollection)
+            ->parseIncludes(['car'])
+            ->transformWith(new SellCarTransformer())
+            ->toArray();
     }
 
     public function show($id)
     {
+        $sellCar = SellCar::findOrFail($id);
 
+        return fractal()
+            ->item($sellCar)
+            ->parseIncludes(['car', 'car_center'])
+            ->transformWith(new SellCarTransformer())
+            ->toArray();
     }
 
     public function setCarUnavailable(StoreCarUnavailableRequest $request)

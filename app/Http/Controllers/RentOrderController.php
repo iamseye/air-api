@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-
 use App\ExtendRentOrder;
 use App\Http\Requests\CancelOrderRequest;
 use App\Http\Requests\ExtendRentOrderRequest;

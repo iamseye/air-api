@@ -8,7 +8,9 @@ class SellCarTransformer extends \League\Fractal\TransformerAbstract
 {
     protected $availableIncludes = [
         'car_unavailable_dates',
-        'rent_orders'
+        'rent_orders',
+        'car',
+        'car_center'
     ];
 
     public function transform(SellCar $sellCar)
@@ -17,7 +19,10 @@ class SellCarTransformer extends \League\Fractal\TransformerAbstract
             'id' => $sellCar->id,
             'available_from' => $sellCar->available_from,
             'available_to' => $sellCar->available_to,
-            'rent_price' => $sellCar->rent_price
+            'buy_price' => $sellCar->buy_price,
+            'rent_price' => $sellCar->rent_price,
+            'description' => $sellCar->description,
+            'stars' => $sellCar->stars,
         ];
     }
 
@@ -29,5 +34,15 @@ class SellCarTransformer extends \League\Fractal\TransformerAbstract
     public function includeRentOrders(SellCar $sellCar)
     {
         return $this->collection($sellCar->rentOrders, new RentOrderTransformer());
+    }
+
+    public function includeCar(SellCar $sellCar)
+    {
+        return $this->item($sellCar->car, new CarTransformer());
+    }
+
+    public function includeCarCenter(SellCar $sellCar)
+    {
+        return $this->item($sellCar->carCenter, new CarCenterTransformer());
     }
 }

@@ -30,14 +30,19 @@ Route::post('password/reset', 'Auth\ResetPasswordController@reset');
 
 Route::post('placeorder', 'PaymentControllunauthenticateder@placeOrder');
 
+Route::get('sellcars', 'SellCarController@index')->name('sellcar.index');
+Route::get('sellcars/{id}', 'SellCarController@show')->name('sellcar.show');
+
+
 Route::group(['middleware' => 'auth:api'], function () {
     Route::put('user/{id}', 'UserController@update')->name('user.update');
     Route::post('upload-verify-photo/{id}', 'UserController@uploadVerifyPhoto')->name('user.uploadVerifyPhoto');
     Route::post('create-rent-order', 'RentOrderController@store')->name('rentOrder.store');
     Route::post('extend-rent-order', 'RentOrderController@extendRentOrder')->name('rentOrder.extendRentOrder');
     Route::post('user-cancel-order', 'RentOrderController@userCancelOrder')->name('rentOrder.userCancelOrder');
-    Route::post('car-unavailable', 'SellCarController@setCarUnavailable')->name('sellCarUnavailable.store');
     Route::post('get-payment-detail', 'RentOrderController@getPaymentDetail')->name('rentOrder.getPaymentDetail');
+    Route::post('car-unavailable', 'SellCarController@setCarUnavailable')->name('sellCarUnavailable.store');
+
 });
 
 //
