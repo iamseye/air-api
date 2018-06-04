@@ -15,4 +15,9 @@ class RentOrder extends Model
     {
         return $this->hasMany('App\ExtendRentOrder');
     }
+
+    public function review()
+    {
+        return $this->hasOne('App\Review');
+    }
 }

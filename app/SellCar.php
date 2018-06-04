@@ -29,4 +29,9 @@ class SellCar extends Model
         return $this->belongsTo('App\Car');
     }
 
+    public function reviews()
+    {
+        return $this->hasMany('App\Review');
+    }
+
 }

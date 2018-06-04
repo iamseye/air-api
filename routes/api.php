@@ -42,7 +42,7 @@ Route::group(['middleware' => 'auth:api'], function () {
     Route::post('user-cancel-order', 'RentOrderController@userCancelOrder')->name('rentOrder.userCancelOrder');
     Route::post('get-payment-detail', 'RentOrderController@getPaymentDetail')->name('rentOrder.getPaymentDetail');
     Route::post('car-unavailable', 'SellCarController@setCarUnavailable')->name('sellCarUnavailable.store');
-
+    Route::post('add-review', 'ReviewController@store')->name('review.store');
 });
 
 //
