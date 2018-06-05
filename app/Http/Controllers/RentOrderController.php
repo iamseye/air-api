@@ -13,6 +13,7 @@ use App\PromoCode;
 use App\RentOrder;
 use App\SellCar;
 use App\Traits\ResponseTrait;
+use App\Traits\ShareFunctionTrait;
 use App\Transformers\RentOrderTransformer;
 use App\Transformers\PaymentDetailTransformer;
 use Carbon\Carbon;
@@ -20,7 +21,7 @@ use GuzzleHttp\Client;
 
 class RentOrderController extends Controller
 {
-    use ResponseTrait;
+    use ResponseTrait, ShareFunctionTrait;
 
     public function store(StoreRentOrderRequest $request)
     {
@@ -244,33 +245,6 @@ class RentOrderController extends Controller
         }
 
         $point->save();
-    }
-
-    /**
-     * @param $carId
-     * @param carbon $startDate
-     * @param carbon $endDate
-     * @return bool
-     */
-    public function isCarAvailable($carId, $startDate, $endDate)
-    {
-        $car = SellCar::findOrFail($carId);
-
-        $startDate = $startDate->toDateTimeString();
-        $endDate = $endDate->toDateTimeString();
-
-        if ($startDate < $car->available_from || $endDate > $car->available_to) {
-            return false;
-        }
-
-        // check whether overlapping other orders
-        foreach ($car->rentOrders as $order) {
-            if ($startDate <= $order->end_date && $endDate >= $order->start_date) {
-                return false;
-            }
-        }
-
-        return true;
     }
 
     /**

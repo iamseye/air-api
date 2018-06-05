@@ -32,6 +32,7 @@ Route::post('placeorder', 'PaymentControllunauthenticateder@placeOrder');
 
 Route::get('sellcars', 'SellCarController@index')->name('sellcar.index');
 Route::get('sellcars/{id}', 'SellCarController@show')->name('sellcar.show');
+Route::post('search-sellcars', 'SearchController@searchSellCar')->name('searchSellCar');
 
 
 Route::group(['middleware' => 'auth:api'], function () {

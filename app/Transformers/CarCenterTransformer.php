@@ -10,6 +10,7 @@ class CarCenterTransformer extends \League\Fractal\TransformerAbstract
     {
         return [
             'name' => $carCenter->name,
+            'area' => $carCenter->area,
             'address' => $carCenter->address,
         ];
     }
