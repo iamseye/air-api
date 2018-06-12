@@ -33,9 +33,7 @@ Route::post('placeorder', 'PaymentControllunauthenticateder@placeOrder');
 Route::get('sellcars', 'SellCarController@index')->name('sellcar.index');
 Route::get('sellcars/{id}', 'SellCarController@show')->name('sellcar.show');
 Route::post('search-sellcars', 'SearchController@searchSellCar')->name('searchSellCar');
-Route::get('check', function() {
-    return 'checking';
-});
+
 
 
 Route::group(['middleware' => 'auth:api'], function () {
@@ -47,6 +45,7 @@ Route::group(['middleware' => 'auth:api'], function () {
     Route::post('get-payment-detail', 'RentOrderController@getPaymentDetail')->name('rentOrder.getPaymentDetail');
     Route::post('car-unavailable', 'SellCarController@setCarUnavailable')->name('sellCarUnavailable.store');
     Route::post('add-review', 'ReviewController@store')->name('review.store');
+    Route::post('test-pay', 'payController@test');
 });
 
 //

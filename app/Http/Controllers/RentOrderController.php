@@ -14,6 +14,7 @@ use App\RentOrder;
 use App\SellCar;
 use App\Traits\ResponseTrait;
 use App\Traits\ShareFunctionTrait;
+use App\Traits\PaymentTrait;
 use App\Transformers\RentOrderTransformer;
 use App\Transformers\PaymentDetailTransformer;
 use Carbon\Carbon;
@@ -21,10 +22,12 @@ use GuzzleHttp\Client;
 
 class RentOrderController extends Controller
 {
-    use ResponseTrait, ShareFunctionTrait;
+    use ResponseTrait, ShareFunctionTrait, PaymentTrait;
 
     public function store(StoreRentOrderRequest $request)
     {
+        //TODO: only send values but not check value
+
         $startDate = Carbon::createFromTimestamp($request->start_date);
         $endDate = Carbon::createFromTimestamp($request->end_date);
         $rentDays = $startDate->diffInDays($endDate);
@@ -79,11 +82,14 @@ class RentOrderController extends Controller
         );
         $order->save();
 
-        return fractal()
-            ->item($order)
-            ->parseIncludes(['sell_car'])
-            ->transformWith(new RentOrderTransformer())
-            ->toArray();
+//        return fractal()
+//            ->item($order)
+//            ->parseIncludes(['sell_car'])
+//            ->transformWith(new RentOrderTransformer())
+//            ->toArray();
+
+        //TODO: add orderNo in db
+        $this->chargeAmount(1000, 201406010001);
     }
 
     public function extendRentOrder(ExtendRentOrderRequest $request)
