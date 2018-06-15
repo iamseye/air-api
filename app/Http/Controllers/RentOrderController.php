@@ -26,8 +26,6 @@ class RentOrderController extends Controller
 
     public function store(StoreRentOrderRequest $request)
     {
-        //TODO: only send values but not check value
-
         $startDate = Carbon::createFromTimestamp($request->start_date);
         $endDate = Carbon::createFromTimestamp($request->end_date);
         $rentDays = $startDate->diffInDays($endDate);
@@ -47,7 +45,7 @@ class RentOrderController extends Controller
         $order->pickup_price = 0;
         $order->promo_code_discount = 0;
 
-        if ($request->promo_code !=null) {
+        if ($request->promo_code != null) {
             if (!$this->isPromoCodeValid($request->promo_code)) {
                 return $this->returnError('此優惠代碼無效或已超過使用次數');
             }
@@ -82,14 +80,8 @@ class RentOrderController extends Controller
         );
         $order->save();
 
-//        return fractal()
-//            ->item($order)
-//            ->parseIncludes(['sell_car'])
-//            ->transformWith(new RentOrderTransformer())
-//            ->toArray();
-
         //TODO: add orderNo in db
-        $this->chargeAmount(1000, 201406010001);
+        $this->payByCreditCard(1000, 201406010001);
     }
 
     public function extendRentOrder(ExtendRentOrderRequest $request)

@@ -24,6 +24,7 @@ class StoreRentOrderRequest extends FormRequest
     public function rules()
     {
         return [
+            'user_id' => 'required|integer',
             'sell_car_id' => 'required|integer',
             'pickup_home_address' => 'string',
             'start_date' => 'required',
