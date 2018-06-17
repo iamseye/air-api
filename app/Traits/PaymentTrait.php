@@ -4,46 +4,43 @@ namespace App\Traits;
 
 trait PaymentTrait
 {
-    public function payByCreditCard($chargeAmount, $orderNo, $userEmail)
+    public function payByCreditCard($chargeAmount, $orderNo)
     {
         $merchantId = env('PAYMENT_MERCHANT_ID');
         $paymentApi = env('PAYMENT_FIRST_TIME_API');
         $hashKey = env('PAYMENT_HASH_KEY');
         $hashIv = env('PAYMENT_HASH_IV');
-        $timestamp = time();
+        $tradingDate = '2018/06/17 14:35:06'; //date('Y/m/d H:i:s');
         $redirectUrl = env('PAYMENT_RESULT_REDIRECT');
 
-        //智富通的check value
-        $mer_array = [
+        $orderNp = 'R'.sprintf('%05d', '1'.time());
+        //check value for payment api
+        $passingData = [
             'MerchantID' => $merchantId,
-            'TimeStamp' => $timestamp,
-            'MerchantOrderNo' => $orderNo,
-            'Version' => '1.1',
-            'Amt' => $chargeAmount,
-        ];
-        ksort($mer_array);
-        $check_merstr = http_build_query($mer_array);
-        $CheckValue_str = 'HashKey='.$hashKey.'&'.$check_merstr.'&HashIV='.$hashIv;
-        $CheckValue = strtoupper(hash('sha256', $CheckValue_str));
-
-        $data = [
-            'MerchantID' => $merchantId,
-            'RespondType' => 'JSON',
-            'CheckValue' => $CheckValue,
-            'TimeStamp' => $timestamp,
+            'MerchantTradeNo' => $orderNp,
+            'MerchantTradeDate' => $tradingDate,
+            'PaymentType' => 'aio',
+            'TotalAmount' => $chargeAmount,
+            'TradeDesc' => 'testefer',
+            'ItemName' => '1qaz2wsx',
             'ReturnURL' => $redirectUrl,
-            'Version' => '1.1',
-            'MerchantOrderNo' => $orderNo,
-            'Amt' => $chargeAmount,
-            'ItemDesc' => 'testetset',
-            'Email' => $userEmail,
-            'LoginType' => 0,
-            'CREDITAGREEMENT' => 1,
-            'OrderComment' => 'tetetse',
-            'TokenTerm' => $userEmail
+            'ChoosePayment' => 'Credit',
+            'EncryptType' => 1
         ];
 
-        $this->callPostApi($paymentApi, $data);
+        ksort($passingData);
+
+        $str = '';
+        foreach ($passingData as $key => $parameter) {
+            $str .= '&'.$key.'='.$parameter;
+        }
+
+        $checkValueString = 'HashKey='.$hashKey.$str.'&HashIV='.$hashIv;
+        $checkValueString = strtolower(urlencode($checkValueString));
+        $checkMacValue = strtoupper(hash('sha256', $checkValueString));
+
+        array_push($passingData, $checkMacValue);
+        $this->callPostApi($paymentApi, $passingData);
     }
 
     public function callPostApi($url, $formData)

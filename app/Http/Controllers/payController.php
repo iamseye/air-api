@@ -12,14 +12,17 @@ class payController extends Controller
 
     public function test()
     {
-        $this->payByCreditCard(1000, 201406010001, 'cocarmaster@gmail.com');
+        $this->payByCreditCard(1000, 'efwef4cf4cf43');
     }
 
     public function paymentResult(Request $request)
     {
+
         $result = $request->all();
 
-        if (isset($result['Status']) && $result['Status'] === 'SUCCESS') {
+        dd($result);
+
+        if (isset($result['RtnCode']) && $result['RtnCode'] === 1) {
             $responseResut = json_decode($result['Status']);
             $responseResut['TokenValue'];
 //TokenValue

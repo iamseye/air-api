@@ -38,7 +38,6 @@ class RentOrderController extends Controller
             return $this->returnError('體驗日期不在車子可以的範圍內');
         }
 
-        $userEmail = User::findOrFail($request->user_id)->email;
         $sellCar = SellCar::findOrFail($request->sell_car_id);
         $rentPrice = $sellCar->rent_price;
 
@@ -82,7 +81,7 @@ class RentOrderController extends Controller
         );
         $order->save();
 
-        $this->payByCreditCard($order->total_price, $order->order_no, $order->user_id, $userEmail);
+        $this->payByCreditCard($order->total_price, $order->order_no);
     }
 
     public function extendRentOrder(ExtendRentOrderRequest $request)
