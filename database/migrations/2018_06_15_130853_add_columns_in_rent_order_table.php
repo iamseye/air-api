@@ -14,7 +14,7 @@ class AddColumnsInRentOrderTable extends Migration
     public function up()
     {
         Schema::table('rent_orders', function (Blueprint $table) {
-            $table->string('orderNo', 20)->unique();
+            $table->string('order_no', 20)->unique();
         });
     }
 
@@ -26,7 +26,7 @@ class AddColumnsInRentOrderTable extends Migration
     public function down()
     {
         Schema::table('rent_orders', function (Blueprint $table) {
-            $table->dropColumn(['orderNo']);
+            $table->dropColumn(['order_no']);
         });
     }
 }

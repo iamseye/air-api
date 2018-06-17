@@ -38,12 +38,14 @@ class RentOrderController extends Controller
             return $this->returnError('體驗日期不在車子可以的範圍內');
         }
 
+        $userEmail = User::findOrFail($request->user_id)->email;
         $sellCar = SellCar::findOrFail($request->sell_car_id);
         $rentPrice = $sellCar->rent_price;
 
         $order = new RentOrder();
         $order->pickup_price = 0;
         $order->promo_code_discount = 0;
+        $order->order_no = 'R'.sprintf('%05d', $request->user_id.time());
 
         if ($request->promo_code != null) {
             if (!$this->isPromoCodeValid($request->promo_code)) {
@@ -80,8 +82,7 @@ class RentOrderController extends Controller
         );
         $order->save();
 
-        //TODO: add orderNo in db
-        $this->payByCreditCard(1000, 201406010001);
+        $this->payByCreditCard($order->total_price, $order->order_no, $order->user_id, $userEmail);
     }
 
     public function extendRentOrder(ExtendRentOrderRequest $request)
