@@ -35,7 +35,7 @@ trait PaymentTrait
             'TokenTerm' => 'testesfrf'.$orderNo
         ]);
 
-
+dd($passingData);
         $this->callPostApi($paymentApi, $passingData);
     }
 
