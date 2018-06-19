@@ -10,13 +10,12 @@ trait PaymentTrait
         $paymentApi = env('PAYMENT_API');
         $returnUrlToFrontEnd = env('PAYMENT_RESULT_FRONTEND_URL');
         $notifyUrlToBackEnd = env('PAYMENT_RESULT_BACKEND_URL');
-
-
+        
         $orderNo = 'R'.sprintf('%05d', '1'.time());
 
         $passingData = [
             'MerchantID' => $merchantId,
-            'TimeStamp' => '1529385644',
+            'TimeStamp' => time(),
             'MerchantOrderNo' => $orderNo,
             'Version' =>'1.2',
             'Amt' => $chargeAmount
@@ -26,7 +25,7 @@ trait PaymentTrait
 
         $passingData = array_merge($passingData, [
             'RespondType' => 'JSON',
-            'ItemDesc' => 'testtest',
+            'ItemDesc' => '體驗車輛訂單',
             'Email' => 'iamseye@gmail.com',
             'LoginType' => 0,
             'CREDITAGREEMENT' => 1,
