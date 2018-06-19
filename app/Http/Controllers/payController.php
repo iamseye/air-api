@@ -17,7 +17,6 @@ class payController extends Controller
 
     public function paymentResult(Request $request)
     {
-
         $result = $request->all();
 
         dd($result);
@@ -25,7 +24,6 @@ class payController extends Controller
         if (isset($result['RtnCode']) && $result['RtnCode'] === 1) {
             $responseResut = json_decode($result['Status']);
             $responseResut['TokenValue'];
-//TokenValue
 
         } else {
             return redirect(env('HOME_PAGE'), 302, 'Payment API Error!');

@@ -7,39 +7,35 @@ trait PaymentTrait
     public function payByCreditCard($chargeAmount, $orderNo)
     {
         $merchantId = env('PAYMENT_MERCHANT_ID');
-        $paymentApi = env('PAYMENT_FIRST_TIME_API');
-        $hashKey = env('PAYMENT_HASH_KEY');
-        $hashIv = env('PAYMENT_HASH_IV');
-        $tradingDate = '2018/06/17 14:35:06'; //date('Y/m/d H:i:s');
-        $redirectUrl = env('PAYMENT_RESULT_REDIRECT');
+        $paymentApi = env('PAYMENT_API');
+        $returnUrlToFrontEnd = env('PAYMENT_RESULT_FRONTEND_URL');
+        $notifyUrlToBackEnd = env('PAYMENT_RESULT_BACKEND_URL');
 
-        $orderNp = 'R'.sprintf('%05d', '1'.time());
-        //check value for payment api
+
+        $orderNo = 'R'.sprintf('%05d', '1'.time());
+
         $passingData = [
             'MerchantID' => $merchantId,
-            'MerchantTradeNo' => $orderNp,
-            'MerchantTradeDate' => $tradingDate,
-            'PaymentType' => 'aio',
-            'TotalAmount' => $chargeAmount,
-            'TradeDesc' => 'testefer',
-            'ItemName' => '1qaz2wsx',
-            'ReturnURL' => $redirectUrl,
-            'ChoosePayment' => 'Credit',
-            'EncryptType' => 1
+            'TimeStamp' => '1529385644',
+            'MerchantOrderNo' => $orderNo,
+            'Version' =>'1.2',
+            'Amt' => $chargeAmount
         ];
 
-        ksort($passingData);
+        $passingData['CheckValue'] = $this->createCheckValue($passingData);
 
-        $str = '';
-        foreach ($passingData as $key => $parameter) {
-            $str .= '&'.$key.'='.$parameter;
-        }
+        $passingData = array_merge($passingData, [
+            'RespondType' => 'JSON',
+            'ItemDesc' => 'testtest',
+            'Email' => 'iamseye@gmail.com',
+            'LoginType' => 0,
+            'CREDITAGREEMENT' => 1,
+            'ReturnURL' => $returnUrlToFrontEnd,
+            'NotifyURL' => $notifyUrlToBackEnd,
+            'TokenTerm' => 'testesfrf'.$orderNo
+        ]);
 
-        $checkValueString = 'HashKey='.$hashKey.$str.'&HashIV='.$hashIv;
-        $checkValueString = strtolower(urlencode($checkValueString));
-        $checkMacValue = strtoupper(hash('sha256', $checkValueString));
 
-        array_push($passingData, $checkMacValue);
         $this->callPostApi($paymentApi, $passingData);
     }
 
@@ -59,5 +55,16 @@ trait PaymentTrait
         }
         curl_close($ch);
         print_r($result);
+    }
+
+    public function createCheckValue($dataArray)
+    {
+        $hashKey = env('PAYMENT_HASH_KEY');
+        $hashIv = env('PAYMENT_HASH_IV');
+
+        ksort($dataArray);
+        $checkStr = http_build_query($dataArray);
+        $checkValueStr = 'HashKey='.$hashKey.'&'.$checkStr.'&HashIV='.$hashIv;
+        return strtoupper(hash('sha256', $checkValueStr));
     }
 }
