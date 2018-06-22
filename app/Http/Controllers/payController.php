@@ -14,7 +14,7 @@ class payController extends Controller
 
     public function test()
     {
-        $this->payByCreditCard(1000, 'efwef4cf4cf43');
+        $this->payByCreditCard(1000, 'efwef4cf4cf43', 1);
     }
 
     public function paymentResult(Request $request)

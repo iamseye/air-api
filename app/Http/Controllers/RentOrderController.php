@@ -81,7 +81,11 @@ class RentOrderController extends Controller
         );
         $order->save();
 
-        $this->payByCreditCard($order->total_price, $order->order_no);
+        if ($request->token_value !== null) {
+            $this->payByBindCreditCard($order->total_price, $order->order_no, $request->user_id, $request->token_value);
+        } else {
+            $this->payByFirstCreditCard($order->total_price, $order->order_no, $request->user_id);
+        }
     }
 
     public function extendRentOrder(ExtendRentOrderRequest $request)

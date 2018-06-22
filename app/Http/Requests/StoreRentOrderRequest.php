@@ -30,7 +30,8 @@ class StoreRentOrderRequest extends FormRequest
             'start_date' => 'required',
             'end_date' => 'required',
             'promo_code' => 'string',
-            'buy_insurance' => 'required|boolean'
+            'buy_insurance' => 'required|boolean',
+            'token_value' => 'string'
         ];
     }
 }
