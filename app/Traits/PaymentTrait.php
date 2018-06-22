@@ -17,7 +17,7 @@ trait PaymentTrait
             'MerchantID' => $merchantId,
             'TimeStamp' => time(),
             'MerchantOrderNo' => $orderNo,
-            'Version' =>'1.2',
+            'Version' =>'1.1',
             'Amt' => $chargeAmount
         ];
 
