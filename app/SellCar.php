@@ -34,4 +34,14 @@ class SellCar extends Model
         return $this->hasMany('App\Review');
     }
 
+    public function equipment()
+    {
+        return $this->hasOne('App\SellCarEquipment');
+    }
+
+    public function examination()
+    {
+        return $this->hasOne('App\SellCarExamination');
+    }
+
 }
