@@ -19,7 +19,7 @@ class DatabaseSeeder extends Seeder
             PromoCodesTableSeeder::class,
             EquipmentTableSeeder::class,
             AccessoryTableSeeder::class,
-            EquipmentTableSeeder::class,
+            ExaminationTableSeeder::class,
         ]);
     }
 }
