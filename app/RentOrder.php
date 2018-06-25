@@ -11,6 +11,11 @@ class RentOrder extends Model
         return $this->belongsTo('App\SellCar');
     }
 
+    public function user()
+    {
+        return $this->belongsTo('App\User');
+    }
+
     public function extendRentOrders()
     {
         return $this->hasMany('App\ExtendRentOrder');

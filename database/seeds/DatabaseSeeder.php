@@ -17,6 +17,9 @@ class DatabaseSeeder extends Seeder
             SellCarTableSeeder::class,
             SellerTableSeeder::class,
             PromoCodesTableSeeder::class,
+            EquipmentTableSeeder::class,
+            AccessoryTableSeeder::class,
+            EquipmentTableSeeder::class,
         ]);
     }
 }
