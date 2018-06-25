@@ -23,7 +23,15 @@ class SellCarTableSeeder extends Seeder
             'rent_price' => 4000,
             'available_from' => '2018-05-01 00:00:00',
             'available_to' => '2018-09-01 23:59:59',
-            'active' => true
+            'active' => true,
+            'outside_color'=> '紅',
+            'inside_color'=> '黑',
+            'displacement' => '1720',
+            'shift_system' => '手排',
+            'fuel' => '汽油',
+            'door_number' => 4,
+            'passenger_number' => 5,
+            'driven_method' => '前輪驅動'
         ]);
 
         SellCar::create([
@@ -35,7 +43,15 @@ class SellCarTableSeeder extends Seeder
             'rent_price' => 8000,
             'available_from' => '2018-05-01 00:00:00',
             'available_to' => '2018-09-01 23:59:59',
-            'active' => true
+            'active' => true,
+            'outside_color'=> '紅',
+            'inside_color'=> '黑',
+            'displacement' => '1720',
+            'shift_system' => '手排',
+            'fuel' => '汽油',
+            'door_number' => 4,
+            'passenger_number' => 5,
+            'driven_method' => '前輪驅動'
         ]);
     }
 }
