@@ -10,7 +10,10 @@ class CarTransformer extends \League\Fractal\TransformerAbstract
     {
         return [
             'year' => $car->year,
-            'name' => $car->brand.' '.$car->series_model
+            'brand' => $car->brand,
+            'brand_ch' => $car->brand_ch,
+            'series' => $car->series,
+            'series_model' => $car->series_model
         ];
     }
 }
