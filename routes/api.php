@@ -35,6 +35,7 @@ Route::get('sellcars/{id}', 'SellCarController@show')->name('sellcar.show');
 Route::post('search-sellcars', 'SearchController@searchSellCar')->name('searchSellCar');
 Route::post('test-pay', 'payController@test')->name('test-pay');
 Route::post('pay-result', 'payController@paymentResult')->name('pay-result');
+Route::get('getInitialInfo', 'InitialController@getInitialInfo')->name('init.getInitialInfo');
 
 
 Route::group(['middleware' => 'auth:api'], function () {
