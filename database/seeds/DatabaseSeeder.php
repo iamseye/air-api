@@ -20,6 +20,8 @@ class DatabaseSeeder extends Seeder
             EquipmentTableSeeder::class,
             AccessoryTableSeeder::class,
             ExaminationTableSeeder::class,
+            AreaSeeder::class,
+            VehicleInfoSeeder::class,
         ]);
     }
 }
