@@ -15,14 +15,31 @@ class InitialController extends Controller
     {
 
         $vehicleBrand = VehicleBrand::all();
+        $vehicleBrandArray = [];
+
+        foreach ($vehicleBrand as $vehicle) {
+            array_push($vehicleBrandArray, $vehicle->name_ch.' '.$vehicle->name);
+        }
+
         $vehicleType = VehicleType::all();
-        $area = Area::all();
+        $vehicleTypeArray = [];
+
+        foreach ($vehicleType as $vehicle) {
+            array_push($vehicleTypeArray, $vehicle->name);
+        }
+
+        $areas = Area::all();
+        $areaArray = [];
+
+        foreach ($areas as $area) {
+            array_push($areaArray, $area->name);
+        }
 
         return response()->json([
             'data' => [
-                'vehicleBrand' => fractal()->collection($vehicleBrand)->transformWith(new VehicleBrandTransformer())->toArray(),
-                'vehicleType' => fractal()->collection($vehicleType)->transformWith(new VehicleTypeTransformer())->toArray(),
-                'area' => fractal()->collection($area)->transformWith(new AreaTransformer())->toArray(),
+                'vehicleBrand' => $vehicleBrandArray,
+                'vehicleType' => $vehicleTypeArray,
+                'area' => $areaArray
              ]
         ]);
     }
