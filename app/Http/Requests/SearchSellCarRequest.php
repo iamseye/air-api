@@ -24,16 +24,16 @@ class SearchSellCarRequest extends FormRequest
     public function rules()
     {
         return [
-            'area' => 'array',
-            'vehicle_type' => 'array',
-            'brand' => 'string',
-            'series' => 'string',
-            'series_model' => 'string',
-            'year' => 'integer',
-            'min_price' => 'integer',
-            'max_price' => 'integer',
-            'start_date' => 'integer',
-            'end_date' => 'integer'
+            'area' => 'nullable|array',
+            'vehicle_type' => 'nullable|array',
+            'brand' => 'nullable|string',
+            'series' => 'nullable|string',
+            'series_model' => 'nullable|string',
+            'year' => 'nullable|integer',
+            'min_price' => 'nullable|integer',
+            'max_price' => 'nullable|integer',
+            'start_date' => 'nullable|integer',
+            'end_date' => 'nullable|integer'
         ];
     }
 }
