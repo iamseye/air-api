@@ -26,6 +26,7 @@ class SearchSellCarRequest extends FormRequest
         return [
             'area' => 'array',
             'vehicle_type' => 'array',
+            'brand' => 'string',
             'series' => 'string',
             'series_model' => 'string',
             'year' => 'integer',

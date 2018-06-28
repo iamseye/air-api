@@ -13,7 +13,8 @@ class CarTransformer extends \League\Fractal\TransformerAbstract
             'brand' => $car->brand,
             'brand_ch' => $car->brand_ch,
             'series' => $car->series,
-            'series_model' => $car->series_model
+            'series_model' => $car->series_model,
+            'vehicle_type' => $car->vehicle_type,
         ];
     }
 }

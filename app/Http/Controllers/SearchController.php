@@ -25,6 +25,10 @@ class SearchController extends Controller
                 }
             }
         })->whereHas('car', function ($query) use ($vehicleTypes, $request) {
+            if ($request->brand) {
+                $query->where('brand', '=', $request->brand);
+            }
+
             if ($request->series) {
                 $query->where('series', '=', $request->series);
             }
