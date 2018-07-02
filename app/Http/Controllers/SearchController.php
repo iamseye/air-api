@@ -3,9 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\SellCar;
+use App\Car;
 use App\Http\Requests\SearchSellCarRequest;
 use App\Transformers\SellCarTransformer;
 use App\Traits\ShareFunctionTrait;
+use http\Env\Request;
 
 class SearchController extends Controller
 {
@@ -68,4 +70,60 @@ class SearchController extends Controller
             ->transformWith(new SellCarTransformer())
             ->toArray();
     }
+
+    public function getBrandOptions(\Illuminate\Http\Request $request)
+    {
+        if ($request->brand && $request->series && $request->series_model) {
+            $yearArray = [];
+            $year = Car::distinct()
+                ->where('brand', '=', $request->brand)
+                ->where('series', '=', $request->series)
+                ->where('series_model', '=', $request->series_model)
+                ->get(['year']);
+
+            foreach ($year as $y) {
+                array_push($yearArray, $y->year);
+            }
+
+            return response()->json([
+                'data' => [
+                    'year' => $yearArray
+                ]
+            ]);
+        }
+
+        if ($request->brand && $request->series) {
+            $seriesModelArray = [];
+            $seriesModel = Car::distinct()
+                ->where('brand', '=', $request->brand)
+                ->where('series', '=', $request->series)
+                ->get(['series_model']);
+
+            foreach ($seriesModel as $s) {
+                array_push($seriesModelArray, $s->series_model);
+            }
+
+            return response()->json([
+                'data' => [
+                    'series_model' => $seriesModelArray
+                ]
+            ]);
+        }
+
+        if ($request->brand) {
+            $seriesArray = [];
+            $series = Car::distinct()->where('brand', '=', $request->brand)->get(['series']);
+
+            foreach ($series as $s) {
+                array_push($seriesArray, $s->series);
+            }
+
+            return response()->json([
+                'data' => [
+                    'series' => $seriesArray,
+                ]
+            ]);
+        }
+    }
 }
+
