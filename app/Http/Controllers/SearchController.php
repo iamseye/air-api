@@ -51,12 +51,12 @@ class SearchController extends Controller
                 }
             }
         })->where(function ($query) use ($request) {
-            if ($request->min_price) {
-                $query->where('rent_price', '>=', $request->min_price);
+            if ($request->price[0]) {
+                $query->where('rent_price', '>=', $request->price[0]);
             }
 
-            if ($request->max_price) {
-                $query->where('rent_price', '<=', $request->max_price);
+            if ($request->price[1]) {
+                $query->where('rent_price', '<=', $request->price[1]);
             }
 
             if ($request->start_date && $request->end_date) {

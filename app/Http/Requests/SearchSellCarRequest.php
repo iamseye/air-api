@@ -30,8 +30,7 @@ class SearchSellCarRequest extends FormRequest
             'series' => 'nullable|string',
             'series_model' => 'nullable|string',
             'year' => 'nullable|integer',
-            'min_price' => 'nullable|integer',
-            'max_price' => 'nullable|integer',
+            'price' => 'nullable|array',
             'start_date' => 'nullable|integer',
             'end_date' => 'nullable|integer'
         ];
