@@ -2,12 +2,12 @@
 
 namespace App\Http\Controllers;
 
-use App\Transformers\AreaTransformer;
 use App\VehicleBrand;
 use App\VehicleType;
 use App\Area;
-use App\Transformers\VehicleBrandTransformer;
-use App\Transformers\VehicleTypeTransformer;
+use App\SellCar;
+use Illuminate\Support\Facades\DB;
+
 
 class InitialController extends Controller
 {
@@ -35,11 +35,16 @@ class InitialController extends Controller
             array_push($areaArray, $area->name);
         }
 
+        $minPrice = DB::table('sell_cars')->min('rent_price');
+        $maxPrice = DB::table('sell_cars')->max('rent_price');
+
+
         return response()->json([
             'data' => [
                 'vehicleBrand' => $vehicleBrandArray,
                 'vehicleType' => $vehicleTypeArray,
-                'area' => $areaArray
+                'area' => $areaArray,
+                'price' => [$minPrice, $maxPrice]
              ]
         ]);
     }
