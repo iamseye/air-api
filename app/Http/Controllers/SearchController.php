@@ -51,11 +51,11 @@ class SearchController extends Controller
                 }
             }
         })->where(function ($query) use ($request) {
-            if ($request->price[0]) {
+            if ($request->price && $request->price[0]) {
                 $query->where('rent_price', '>=', $request->price[0]);
             }
 
-            if ($request->price[1]) {
+            if ($request->price && $request->price[1]) {
                 $query->where('rent_price', '<=', $request->price[1]);
             }
 
