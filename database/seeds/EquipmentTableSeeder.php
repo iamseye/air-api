@@ -16,164 +16,164 @@ class EquipmentTableSeeder extends Seeder
 
         Equipment::create([
             'name' => '電動摺疊後視鏡',
-            'code' => 'OUT_1',
             'category' => 'outside',
+            'has_value' => false
         ]);
 
         Equipment::create([
             'name' => '免鑰匙車門啟閉系統',
-            'code' => 'OUT_2',
             'category' => 'outside',
+            'has_value' => false
         ]);
 
         Equipment::create([
             'name' => 'HID頭燈',
-            'code' => 'OUT_3',
             'category' => 'outside',
+            'has_value' => false
         ]);
 
         Equipment::create([
             'name' => 'LED頭燈',
-            'code' => 'OUT_4',
             'category' => 'outside',
+            'has_value' => false
         ]);
 
         Equipment::create([
             'name' => '電動側滑門',
-            'code' => 'OUT_5',
             'category' => 'outside',
+            'has_value' => false
         ]);
 
         Equipment::create([
             'name' => '鋁圈',
-            'code' => 'OUT_6',
             'category' => 'outside',
+            'has_value' => false
         ]);
 
         Equipment::create([
             'name' => '電動天窗',
-            'code' => 'OUT_7',
             'category' => 'outside',
+            'has_value' => false
         ]);
 
         Equipment::create([
             'name' => '全景式天窗',
-            'code' => 'OUT_8',
             'category' => 'outside',
+            'has_value' => false
         ]);
 
         Equipment::create([
             'name' => '霧燈',
-            'code' => 'OUT_9',
             'category' => 'outside',
+            'has_value' => false
         ]);
 
         Equipment::create([
             'name' => '日行燈',
-            'code' => 'OUT_10',
             'category' => 'outside',
+            'has_value' => false
         ]);
 
         Equipment::create([
             'name' => '恆溫空調',
-            'code' => 'IN_1',
             'category' => 'inside',
+            'has_value' => false
         ]);
 
         Equipment::create([
             'name' => '衛星導航',
-            'code' => 'IN_2',
             'category' => 'inside',
+            'has_value' => false
         ]);
 
         Equipment::create([
             'name' => 'DVD影音系統',
-            'code' => 'IN_3',
             'category' => 'inside',
+            'has_value' => false
         ]);
 
         Equipment::create([
             'name' => '數位電視',
-            'code' => 'IN_4',
             'category' => 'inside',
+            'has_value' => false
         ]);
 
         Equipment::create([
             'name' => '定速',
-            'code' => 'IN_5',
             'category' => 'inside',
+            'has_value' => false
         ]);
 
         Equipment::create([
             'name' => '免鑰匙引擎啟閉系統',
-            'code' => 'IN_6',
             'category' => 'inside',
+            'has_value' => false
         ]);
 
         Equipment::create([
             'name' => '電動座椅',
-            'code' => 'IN_7',
             'category' => 'inside',
+            'has_value' => false
         ]);
 
         Equipment::create([
             'name' => '第三排座椅',
-            'code' => 'IN_8',
             'category' => 'inside',
+            'has_value' => false
         ]);
 
         Equipment::create([
             'name' => '皮椅',
-            'code' => 'IN_9',
             'category' => 'inside',
+            'has_value' => false
         ]);
 
         Equipment::create([
             'name' => '方向盤控制鈕',
-            'code' => 'IN_10',
             'category' => 'inside',
+            'has_value' => false
         ]);
 
         Equipment::create([
-            'name' => '安全氣囊(2-9顆含以上)',
-            'code' => 'S_1',
+            'name' => '安全氣囊',
             'category' => 'safety',
+            'has_value' => true
         ]);
 
         Equipment::create([
             'name' => '動態巡跡防滑系統',
-            'code' => 'S_2',
             'category' => 'safety',
+            'has_value' => false
         ]);
 
         Equipment::create([
             'name' => '倒車影像',
-            'code' => 'S_3',
             'category' => 'safety',
+            'has_value' => false
         ]);
 
         Equipment::create([
             'name' => '倒車雷達',
-            'code' => 'S_4',
             'category' => 'safety',
+            'has_value' => false
         ]);
 
         Equipment::create([
             'name' => 'ACC主動式定速系統',
-            'code' => 'S_5',
             'category' => 'safety',
+            'has_value' => false
         ]);
 
         Equipment::create([
             'name' => '車側盲點偵測系統',
-            'code' => 'S_6',
             'category' => 'safety',
+            'has_value' => false
         ]);
 
         Equipment::create([
             'name' => '車道偏移系統',
-            'code' => 'S_7',
             'category' => 'safety',
+            'has_value' => false
         ]);
     }
 }

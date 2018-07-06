@@ -19,7 +19,8 @@ class CreateSellCarsTable extends Migration
             $table->unsignedInteger('car_id');
             $table->unsignedInteger('car_center_id');
             $table->unsignedInteger('sell_car_examination_id')->nullable();
-            $table->string('accessories')->nullable();
+            $table->unsignedInteger('sell_car_accessory_id')->nullable();
+            $table->unsignedInteger('sell_car_equipment_id')->nullable();
             $table->text('description');
             $table->integer('buy_price');
             $table->integer('rent_price');
@@ -30,7 +31,7 @@ class CreateSellCarsTable extends Migration
             $table->boolean('is_sold')->default(false);
             $table->string('class')->nullable();
             $table->integer('mileage')->nullable();
-            $table->dateTime('examination_date')->nullable();
+            $table->date('examination_date')->nullable();
             $table->text('examination_remark')->nullable();
 
             $table->timestamps();

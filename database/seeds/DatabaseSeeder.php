@@ -23,6 +23,8 @@ class DatabaseSeeder extends Seeder
             AreaSeeder::class,
             VehicleInfoSeeder::class,
             SellCarExaminationTableSeeder::class,
+            SellCarEquipmentTableSeeder::class,
+            SellCarAccessoryTableSeeder::class,
         ]);
     }
 }

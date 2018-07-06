@@ -30,7 +30,7 @@ class SellCarController extends Controller
 
         return fractal()
             ->item($sellCar)
-            ->parseIncludes(['car', 'car_center', 'sell_car_examination'])
+            ->parseIncludes(['car', 'car_center', 'sell_car_examination', 'sell_car_equipment', 'sell_car_accessory'])
             ->transformWith(new SellCarTransformer())
             ->toArray();
     }

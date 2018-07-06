@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateSellCarEquipmentsTable extends Migration
+class CreateSellCarAccessoriesTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,12 +13,10 @@ class CreateSellCarEquipmentsTable extends Migration
      */
     public function up()
     {
-        Schema::create('sell_car_equipments', function (Blueprint $table) {
+        Schema::create('sell_car_accessories', function (Blueprint $table) {
             $table->increments('id');
             $table->unsignedInteger('sell_car_id');
-            $table->unsignedInteger('equipment_id');
-            $table->boolean('has_equipment');
-            $table->string('value')->nullable();
+            $table->unsignedInteger('accessory_id');
             $table->timestamps();
         });
     }
@@ -30,6 +28,6 @@ class CreateSellCarEquipmentsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('sell_car_equipments');
+        Schema::dropIfExists('sell_car_accessories');
     }
 }

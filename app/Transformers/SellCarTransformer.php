@@ -11,7 +11,9 @@ class SellCarTransformer extends \League\Fractal\TransformerAbstract
         'rent_orders',
         'car',
         'car_center',
-        'sell_car_examination'
+        'sell_car_examination',
+        'sell_car_equipment',
+        'sell_car_accessory',
     ];
 
     public function transform(SellCar $sellCar)
@@ -51,6 +53,16 @@ class SellCarTransformer extends \League\Fractal\TransformerAbstract
 
     public function includeSellCarExamination(SellCar $sellCar)
     {
-        return $this->collection($sellCar->sellCarExamination, new SellCarExaminationTransformer());
+        return $this->collection($sellCar->sellCarExaminations, new SellCarExaminationTransformer());
+    }
+
+    public function includeSellCarEquipment(SellCar $sellCar)
+    {
+        return $this->collection($sellCar->sellCarEquipments, new SellCarEquipmentTransformer());
+    }
+
+    public function includeSellCarAccessory(SellCar $sellCar)
+    {
+        return $this->collection($sellCar->sellCarAccessories, new SellCarAccessoryTransformer());
     }
 }
