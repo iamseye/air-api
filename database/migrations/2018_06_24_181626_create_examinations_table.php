@@ -16,7 +16,6 @@ class CreateExaminationsTable extends Migration
         Schema::create('examinations', function (Blueprint $table) {
             $table->increments('id');
             $table->string('name');
-            $table->string('code');
             $table->string('category');
             $table->timestamps();
         });

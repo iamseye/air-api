@@ -39,9 +39,9 @@ class SellCar extends Model
         return $this->hasOne('App\SellCarEquipment');
     }
 
-    public function examination()
+    public function sellCarExamination()
     {
-        return $this->hasOne('App\SellCarExamination');
+        return $this->hasMany('App\SellCarExamination');
     }
 
 }
