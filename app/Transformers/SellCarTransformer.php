@@ -23,6 +23,9 @@ class SellCarTransformer extends \League\Fractal\TransformerAbstract
             'buy_price' => $sellCar->buy_price,
             'rent_price' => $sellCar->rent_price,
             'description' => $sellCar->description,
+            'class' => $sellCar->calss,
+            'mileage' => $sellCar->mileage,
+            'examination_date' => $sellCar->examination_date
         ];
     }
 

@@ -31,7 +31,10 @@ class SellCarTableSeeder extends Seeder
             'fuel' => '汽油',
             'door_number' => 4,
             'passenger_number' => 5,
-            'driven_method' => '前輪驅動'
+            'driven_method' => '前輪驅動',
+            'class' => 'A',
+            'mileage' => 10000,
+            'examination_date' => '2018-05-01',
         ]);
 
         SellCar::create([
@@ -51,7 +54,10 @@ class SellCarTableSeeder extends Seeder
             'fuel' => '汽油',
             'door_number' => 4,
             'passenger_number' => 5,
-            'driven_method' => '前輪驅動'
+            'driven_method' => '前輪驅動',
+            'class' => 'B +',
+            'mileage' => 15000,
+            'examination_date' => '2018-05-01',
         ]);
     }
 }
