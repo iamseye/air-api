@@ -11,6 +11,7 @@ class SellCarExaminationTransformer extends \League\Fractal\TransformerAbstract
         return [
             'title' => $sellCarExamination->examination->name,
             'category' => $sellCarExamination->examination->category,
+            'pic_url' => $sellCarExamination->pic_url,
             'passed' => $sellCarExamination->passed,
             'remarks' => $sellCarExamination->remarks
         ];

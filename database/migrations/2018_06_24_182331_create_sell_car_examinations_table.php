@@ -17,6 +17,7 @@ class CreateSellCarExaminationsTable extends Migration
             $table->increments('id');
             $table->unsignedInteger('sell_car_id');
             $table->unsignedInteger('examination_id');
+            $table->string('pic_url')->nullable();
             $table->boolean('passed');
             $table->string('remarks')->nullable();
             $table->timestamps();
