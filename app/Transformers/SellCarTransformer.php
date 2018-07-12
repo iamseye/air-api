@@ -27,7 +27,15 @@ class SellCarTransformer extends \League\Fractal\TransformerAbstract
             'description' => $sellCar->description,
             'class' => $sellCar->class,
             'mileage' => $sellCar->mileage,
-            'examination_date' => $sellCar->examination_date
+            'examination_date' => $sellCar->examination_date,
+            'outside_color' => $sellCar->outside_color,
+            'inside_color' => $sellCar->inside_color,
+            'displacement' => $sellCar->displacement,
+            'shift_system' => $sellCar->shift_system,
+            'fuel' => $sellCar->fuel,
+            'door_number' => $sellCar->door_number,
+            'passenger_number' => $sellCar->passenger_number,
+            'driven_method' => $sellCar->driven_method,
         ];
     }
 
