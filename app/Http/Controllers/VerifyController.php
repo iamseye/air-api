@@ -75,15 +75,15 @@ class VerifyController extends Controller
         $phoneVerifyCode = $phoneVerifyCode->generateVerifyCode($userMobile);
 
         try {
-//            $client = new Client();
-//            $client->get('http://api.every8d.com/API21/HTTP/sendSMS.ashx', [
-//                'form_params' => [
-//                    'UID' => env('SEND_TEXT_SERVER_USERID'),
-//                    'PWD' => env('SEND_TEXT_SERVER_PASSWORD'),
-//                    'MSG' => '感謝您使用AirCnC平台，您的驗證碼為：' . $phoneVerifyCode,
-//                    'DEST' => $userMobile
-//                ]
-//            ]);
+            $client = new Client();
+            $client->get('http://api.every8d.com/API21/HTTP/sendSMS.ashx', [
+                'form_params' => [
+                    'UID' => env('SEND_TEXT_SERVER_USERID'),
+                    'PWD' => env('SEND_TEXT_SERVER_PASSWORD'),
+                    'MSG' => '感謝您使用AirCnC平台，您的驗證碼為：' . $phoneVerifyCode,
+                    'DEST' => $userMobile
+                ]
+            ]);
 
             return $this->returnSuccess('MOBILE_VERIFY_CODE_SENT');
 
