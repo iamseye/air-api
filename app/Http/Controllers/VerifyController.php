@@ -64,6 +64,10 @@ class VerifyController extends Controller
     {
         $userMobile = $request->mobile;
 
+        if (User::where('mobile', $request->mobile)->firstOrFail()) {
+            return $this->returnError('此手機號碼已註冊，請重新輸入！');
+        }
+
         try {
             User::findOrFail($request->user_id)
                 ->update(['mobile' => $userMobile]);
