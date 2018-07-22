@@ -110,7 +110,7 @@ class VerifyController extends Controller
             return $this->returnError('驗證碼重複使用');
         }
 
-        if ($verifyCode->expired_at > date('Y-m-d H:i:s')) {
+        if (new \DateTime($verifyCode->expired_at) > date('Y-m-d H:i:s')) {
             return $this->returnError('驗證碼已過期');
         }
 
