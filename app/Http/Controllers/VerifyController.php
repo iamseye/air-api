@@ -99,10 +99,8 @@ class VerifyController extends Controller
 
     public function verifyMobile(Request $request)
     {
-        $verifyCode = PhoneVerifyCode::where('code', $request->code)
-            ->where('expired_at', '>', date('Y-m-d H:i:s'))
-            ->first();
-
+        $verifyCode = PhoneVerifyCode::where('mobile', $request->mobile)
+            ->where('code', $request->code)->first();
 
         if (is_null($verifyCode)) {
             return $this->returnError('驗證碼錯誤');
@@ -110,6 +108,10 @@ class VerifyController extends Controller
 
         if ($verifyCode->is_used) {
             return $this->returnError('驗證碼重複使用');
+        }
+
+        if ($verifyCode->expired_at > date('Y-m-d H:i:s')) {
+            return $this->returnError('驗證碼已過期');
         }
 
         $verifyCode->update(['is_used' => true]);
