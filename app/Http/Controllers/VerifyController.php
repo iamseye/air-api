@@ -99,21 +99,17 @@ class VerifyController extends Controller
 
     public function verifyMobile(Request $request)
     {
-        $mytime = Carbon::now();
-
-        dd($mytime);
-
         $verifyCode = PhoneVerifyCode::where('code', $request->code)
             ->where('expired_at', '>', date('Y-m-d H:i:s'))
             ->first();
 
 
         if (is_null($verifyCode)) {
-            return $this->returnError('CODE_INVALID');
+            return $this->returnError('驗證碼錯誤');
         }
 
         if ($verifyCode->is_used) {
-            return $this->returnError('CODE_USED');
+            return $this->returnError('驗證碼重複使用');
         }
 
         $verifyCode->update(['is_used' => true]);
