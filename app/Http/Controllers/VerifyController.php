@@ -110,7 +110,7 @@ class VerifyController extends Controller
             return $this->returnError('驗證碼重複使用');
         }
 
-        if (new \DateTime($verifyCode->expired_at) > date('Y-m-d H:i:s')) {
+        if ($verifyCode->expired_at < date('Y-m-d H:i:s')) {
             return $this->returnError('驗證碼已過期');
         }
 
@@ -118,6 +118,6 @@ class VerifyController extends Controller
         $verifyCode->user()
             ->update(['is_phone_verified' => true]);
 
-        return $this->returnSuccess('MOBILE_VERIFIED');
+        return $this->returnSuccess('號碼驗證成功');
     }
 }
