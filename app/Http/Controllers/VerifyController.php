@@ -64,16 +64,18 @@ class VerifyController extends Controller
     {
         $userMobile = $request->mobile;
 
-        $mobile = User::where('mobile', $request->mobile)->first();
-        if ($mobile) {
-            return $this->returnError('此手機號碼已註冊，請重新輸入！');
-        }
+        if ((isset($request->resend) && !$request->resend) || !isset($request->resend)) {
+            $mobile = User::where('mobile', $request->mobile)->first();
+            if ($mobile) {
+                return $this->returnError('此手機號碼已註冊，請重新輸入！');
+            }
 
-        try {
-            User::findOrFail($request->user_id)
-                ->update(['mobile' => $userMobile]);
-        } catch (\Exception $e) {
-            return $this->returnError('USER_NOT_FOUND');
+            try {
+                User::findOrFail($request->user_id)
+                    ->update(['mobile' => $userMobile]);
+            } catch (\Exception $e) {
+                return $this->returnError('USER_NOT_FOUND');
+            }
         }
 
         $phoneVerifyCode= new PhoneVerifyCode();
