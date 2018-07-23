@@ -44,12 +44,22 @@ class VerifyController extends Controller
             return $this->returnError('EMAIL_NOT_REGISTERED');
         }
 
+        if (isset($request->updateEmail) && $request->updateEmail !== '') {
+            $updateEmail = User::where('email', $request->updateEmail)->first();
+
+            if ($updateEmail) {
+                return $this->returnError('此Email已註冊，請重新輸入！');
+            }
+            $user->email = $request->updateEmail;
+            $user->save();
+        }
+
         if ($user->verification->is_email_verified) {
             return $this->returnError('EMAIL_IS_VERIFIED');
         }
 
         $emailVerifyToken= new EmailVerifyToken();
-        $emailVerifyToken->generateVerifyToken($request->email);
+        $emailVerifyToken->generateVerifyToken($user->email);
 
         try {
             $user->sendVerificationEmail();
