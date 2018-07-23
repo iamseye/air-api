@@ -127,7 +127,8 @@ class VerifyController extends Controller
         }
 
         $verifyCode->update(['is_used' => true]);
-        $verifyCode->user()
+
+        $verifyCode->user->verification
             ->update(['is_phone_verified' => true]);
 
         return $this->returnSuccess('號碼驗證成功');
