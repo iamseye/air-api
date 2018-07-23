@@ -126,10 +126,11 @@ class VerifyController extends Controller
             return $this->returnError('驗證碼已過期');
         }
 
-        $verifyCode->update(['is_used' => true]);
+        $userVerification = $verifyCode->user->verification;
+        $userVerification->is_phone_verified = true;
+        $userVerification->save();
 
-        $verifyCode->user->verification
-            ->update(['is_phone_verified' => true]);
+        $verifyCode->update(['is_used' => true]);
 
         return $this->returnSuccess('號碼驗證成功');
     }
