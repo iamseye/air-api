@@ -33,7 +33,7 @@ class VerifyController extends Controller
         $userVerification->is_email_verified = true;
         $userVerification->save();
 
-        return redirect(url(env('HOME_PAGE')));
+        return redirect(url(env('EMAIL_VERIFIED_URL')));
     }
 
     public function sendVerificationEmail(Request $request)
