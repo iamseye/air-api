@@ -48,6 +48,7 @@ Route::group(['middleware' => 'auth:api'], function () {
     Route::post('get-payment-detail', 'RentOrderController@getPaymentDetail')->name('rentOrder.getPaymentDetail');
     Route::post('car-unavailable', 'SellCarController@setCarUnavailable')->name('sellCarUnavailable.store');
     Route::post('add-review', 'ReviewController@store')->name('review.store');
+    Route::post('get-auth-user', 'UserController@getAuthUser')->name('user.getAuthUser');
 
 });
 

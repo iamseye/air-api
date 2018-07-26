@@ -11,6 +11,19 @@ use Illuminate\Support\Facades\Storage;
 
 class UserController extends Controller
 {
+    public function getAuthUser(Request $request)
+    {
+        $user = User::where('api_token', '=', $request->token)->first();
+
+        if ($user) {
+            return fractal()
+                ->item($user)
+                ->transformWith(new UserTransformer)
+                ->toArray();
+        }
+
+        return 'error';
+    }
 
     public function update(UpdateUserRequest $request, $id)
     {

@@ -17,6 +17,9 @@ class UserTransformer extends \League\Fractal\TransformerAbstract
             'id' => $user->id,
             'name' => $user->name,
             'email' => $user->email,
+            'mobile' => $user->mobile,
+            'token' => $user->api_token,
+            'is_seller' => $user->is_seller
         ];
     }
 
