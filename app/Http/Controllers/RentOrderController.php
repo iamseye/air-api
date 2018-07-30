@@ -26,8 +26,8 @@ class RentOrderController extends Controller
 
     public function store(StoreRentOrderRequest $request)
     {
-        $startDate = Carbon::createFromTimestamp($request->start_date);
-        $endDate = Carbon::createFromTimestamp($request->end_date);
+        $startDate = Carbon::createFromFormat('Y-m-d', $request->start_date);
+        $endDate = Carbon::createFromFormat('Y-m-d', $request->end_date);
         $rentDays = $startDate->diffInDays($endDate);
 
         if ($startDate < Carbon::now()) {
@@ -131,8 +131,8 @@ class RentOrderController extends Controller
 
     public function getPaymentDetail(GetPaymentDetailRequest $request)
     {
-        $startDate = Carbon::createFromTimestamp($request->start_date);
-        $endDate = Carbon::createFromTimestamp($request->end_date);
+        $startDate = Carbon::createFromFormat('Y-m-d', $request->start_date);
+        $endDate = Carbon::createFromFormat('Y-m-d', $request->end_date);
         $rentDays = $startDate->diffInDays($endDate);
 
         if ($startDate < Carbon::now()) {
