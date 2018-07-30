@@ -25,10 +25,8 @@ class GetPaymentDetailRequest extends FormRequest
     {
         return [
             'sell_car_id' => 'required|integer',
-            'pickup_home_address' => 'string',
             'start_date' => 'required',
             'end_date' => 'required',
-            'promo_code' => 'string'
         ];
     }
 }
