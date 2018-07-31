@@ -80,9 +80,9 @@ trait PaymentTrait
             'TokenTerm' => $email
         ]);
 
-        var_dump($passingData);
+        return $passingData;
 
-        $this->callPostApi($paymentApi, $passingData);
+       // $this->callPostApi($paymentApi, $passingData);
     }
 
     public function callPostApi($url, $formData)

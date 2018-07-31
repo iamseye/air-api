@@ -19,10 +19,25 @@ use App\Transformers\RentOrderTransformer;
 use App\Transformers\PaymentDetailTransformer;
 use Carbon\Carbon;
 use GuzzleHttp\Client;
+use Illuminate\Http\Request;
 
 class RentOrderController extends Controller
 {
     use ResponseTrait, ShareFunctionTrait, PaymentTrait;
+
+    public function completeOrder(Request $request)
+    {
+
+        if ($request->order_no) {
+            $order = RentOrder::where('order_no', '=', $request->order_no)->first();
+            $order->status = 'PAID';
+            $order->save();
+
+            return $this->returnSuccess('訂單成功成立');
+        }
+
+        return $this->returnError('request not correct');
+    }
 
     public function store(StoreRentOrderRequest $request)
     {
@@ -84,7 +99,12 @@ class RentOrderController extends Controller
         if ($request->token_value !== null) {
             $this->payByBindCreditCard($order->total_price, $order->order_no, $request->user_id, $request->token_value);
         } else {
-            $this->payByFirstCreditCard($order->total_price, $order->order_no, $request->user_id);
+            return response()->json([
+                'data' => [
+                    'paymentApi' => env('PAYMENT_API'),
+                    'passingData' => $this->payByFirstCreditCard($order->total_price, $order->order_no, $request->user_id),
+                ]
+            ]);
         }
     }
 
