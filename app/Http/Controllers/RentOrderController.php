@@ -41,8 +41,8 @@ class RentOrderController extends Controller
 
     public function store(StoreRentOrderRequest $request)
     {
-        $startDate = Carbon::createFromFormat('Y-m-d', $request->start_date);
-        $endDate = Carbon::createFromFormat('Y-m-d', $request->end_date);
+        $startDate = Carbon::createFromFormat('Y-m-d H:i', $request->start_date.' '.$request->start_time);
+        $endDate = Carbon::createFromFormat('Y-m-d H:i', $request->end_date.' '.$request->start_time);
         $rentDays = $startDate->diffInDays($endDate);
 
         if ($startDate < Carbon::now()) {
