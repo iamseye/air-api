@@ -7,6 +7,7 @@ use App\SellCar;
 use App\User;
 use App\Traits\ResponseTrait;
 use App\Http\Requests\PayByPrimeRequest;
+use App\Http\Requests\PayByTokenRequest;
 use App\UserPayment;
 use App\UserRememberCard;
 use GuzzleHttp\Client;
@@ -19,9 +20,9 @@ class payController extends Controller
     {
         $order = RentOrder::findOrFail($request->order_id);
 
-//        if ($order->status === 'PAID') {
-//            return $this->returnError('此訂單已付款');
-//        }
+        if ($order->status === 'PAID') {
+            return $this->returnError('此訂單已付款');
+        }
 
         if ($request->amount !== $order->total_price) {
             return $this->returnError('付款金額不正確');
@@ -74,6 +75,59 @@ class payController extends Controller
         }
 
         return $this->payResult($request->remember, $order->order_no, $order->user_id, $responseObj);
+    }
+
+    public function payByToken(PayByTokenRequest $request)
+    {
+        $order = RentOrder::findOrFail($request->order_id);
+
+//        if ($order->status === 'PAID') {
+//            return $this->returnError('此訂單已付款');
+//        }
+
+        if ($request->amount !== $order->total_price) {
+            return $this->returnError('付款金額不正確');
+        }
+
+        $sellCar = SellCar::findOrFail($order->sell_car_id);
+
+        $details = $sellCar->car->brand . ' ' . $sellCar->car->series . '於' . $order->start_date . '至'
+            . $order->end_date . '之體驗費用';
+
+        $client = new Client();
+        try {
+            $response = $client->post(env('TAPPAY_TOKEN_API'), [
+                'headers' => [
+                    'Content-Type' => 'application/json',
+                    'x-api-key' => env('TAPPAY_X_API_KEY'),
+                ],
+                'json' => [
+                    'card_key' => $request->card_key,
+                    'card_token' => $request->card_token,
+                    'partner_key' => env('TAPPAY_PARTNER_KEY'),
+                    'merchant_id' => env('TAPPAY_MERCHANT_ID'),
+                    'currency' => 'TWD',
+                    'details' => $details,
+                    'order_number' => $order->order_no,
+                    'amount' => $request->amount,
+                ],
+                'timeout' => 30
+            ]);
+
+            $responseObj = json_decode($response->getBody());
+
+            if ($responseObj->status !== 0) {
+                return $this->returnError($responseObj->msg);
+            }
+
+            $order->status = 'PAID';
+            $order->save();
+
+        } catch (\Exception $e) {
+            return $this->returnError('TAPPAY API FAILED');
+        }
+
+        return $this->payResult(false, $order->order_no, $order->user_id, $responseObj);
     }
 
     public function payResult($rememberCard, $orderNo, $userId, $result)

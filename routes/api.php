@@ -49,4 +49,5 @@ Route::group(['middleware' => 'auth:api'], function () {
     Route::post('add-review', 'ReviewController@store')->name('review.store');
     Route::post('get-auth-user', 'UserController@getAuthUser')->name('user.getAuthUser');
     Route::post('pay-by-prime', 'payController@payByPrime')->name('pay.payByPrime');
+    Route::post('pay-by-token', 'payController@payByToken')->name('pay.payByToken');
 });
