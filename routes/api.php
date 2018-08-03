@@ -33,8 +33,6 @@ Route::post('placeorder', 'PaymentControllunauthenticateder@placeOrder');
 Route::get('sellcars', 'SellCarController@index')->name('sellcar.index');
 Route::get('sellcars/{id}', 'SellCarController@show')->name('sellcar.show');
 Route::post('search-sellcars', 'SearchController@searchSellCar')->name('searchSellCar');
-Route::post('test-pay', 'payController@test')->name('test-pay');
-Route::post('pay-result', 'payController@paymentResult')->name('pay-result');
 Route::get('getInitialInfo', 'InitialController@getInitialInfo')->name('init.getInitialInfo');
 Route::post('get-brand-options', 'SearchController@getBrandOptions')->name('search.getSeries');
 
@@ -50,19 +48,5 @@ Route::group(['middleware' => 'auth:api'], function () {
     Route::post('car-unavailable', 'SellCarController@setCarUnavailable')->name('sellCarUnavailable.store');
     Route::post('add-review', 'ReviewController@store')->name('review.store');
     Route::post('get-auth-user', 'UserController@getAuthUser')->name('user.getAuthUser');
-
+    Route::post('pay-by-prime', 'payController@payByPrime')->name('pay.payByPrime');
 });
-
-//
-//Route::group(['middleware' => 'auth:api'], function() {
-//    Route::get('articles', 'ArticleController@index');
-//    Route::get('articles/{article}', 'ArticleController@show');
-//    Route::post('articles', 'ArticleController@store');
-//    Route::put('articles/{article}', 'ArticleController@update');
-//    Route::delete('articles/{article}', 'ArticleController@delete');
-//});
-
-
-//Auth::guard('api')->user(); // instance of the logged user
-//Auth::guard('api')->check(); // if a user is authenticated
-//Auth::guard('api')->id(); // the id of the authenticated user

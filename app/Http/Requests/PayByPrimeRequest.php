@@ -4,7 +4,7 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class StoreRentOrderRequest extends FormRequest
+class PayByPrimeRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -24,13 +24,10 @@ class StoreRentOrderRequest extends FormRequest
     public function rules()
     {
         return [
-            'user_id' => 'required|integer',
-            'sell_car_id' => 'required|integer',
-            'pickup_home_address' => 'string',
-            'start_date' => 'required',
-            'end_date' => 'required',
-            'promo_code' => 'string',
-            'buy_insurance' => 'required|boolean',
+            'order_id' => 'required|integer',
+            'prime' => 'required|string',
+            'amount' => 'required|integer',
+            'remember' => 'required|boolean',
         ];
     }
 }

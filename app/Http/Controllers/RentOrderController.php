@@ -14,7 +14,6 @@ use App\RentOrder;
 use App\SellCar;
 use App\Traits\ResponseTrait;
 use App\Traits\ShareFunctionTrait;
-use App\Traits\PaymentTrait;
 use App\Transformers\RentOrderTransformer;
 use App\Transformers\PaymentDetailTransformer;
 use Carbon\Carbon;
@@ -23,7 +22,7 @@ use Illuminate\Http\Request;
 
 class RentOrderController extends Controller
 {
-    use ResponseTrait, ShareFunctionTrait, PaymentTrait;
+    use ResponseTrait, ShareFunctionTrait;
 
     public function completeOrder(Request $request)
     {
@@ -96,16 +95,10 @@ class RentOrderController extends Controller
         );
         $order->save();
 
-        if ($request->token_value !== null) {
-            $this->payByBindCreditCard($order->total_price, $order->order_no, $request->user_id, $request->token_value);
-        } else {
-            return response()->json([
-                'data' => [
-                    'paymentApi' => env('PAYMENT_API'),
-                    'passingData' => $this->payByFirstCreditCard($order->total_price, $order->order_no, $request->user_id),
-                ]
-            ]);
-        }
+        return fractal()
+            ->item($order)
+            ->transformWith(new RentOrderTransformer())
+            ->toArray();
     }
 
     public function extendRentOrder(ExtendRentOrderRequest $request)

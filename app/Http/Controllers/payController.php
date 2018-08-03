@@ -3,46 +3,74 @@
 namespace App\Http\Controllers;
 
 use App\RentOrder;
-use App\Traits\PaymentTrait;
+use App\SellCar;
+use App\User;
 use App\Traits\ResponseTrait;
-use App\UserPaymnetCards;
-use Illuminate\Http\Request;
+use App\Http\Requests\PayByPrimeRequest;
+use GuzzleHttp\Client;
 
 class payController extends Controller
 {
-    use PaymentTrait, ResponseTrait;
+    use ResponseTrait;
 
-    public function test()
+    public function payByPrime(PayByPrimeRequest $request)
     {
-        $this->payByCreditCard(1000, 'efwef4cf4cf43', 1);
-    }
+        $order = RentOrder::findOrFail($request->order_id);
 
-    public function paymentResult(Request $request)
-    {
-        $result = json_decode($request->get('JSONData'));
-        dd($result);
+        if ($order->status === 'PAID') {
+            return $this->returnError('此訂單已付款');
+        }
 
-        // TODO: check response and test
-        if (isset($result['Status']) && $result['Status'] === 'SUCCESS') {
-            $responseResult = json_decode($result->Result);
-            $orderNo = $responseResult->MerchantOrderNo;
-            $rentOrder = RentOrder::where('order_no', $orderNo)->get();
-            $rentOrder->status = 'BOOKED';
-            $rentOrder->save();
+        if ($request->amount !== $order->total_price) {
+            return $this->returnError('付款金額不正確');
+        }
 
-            $paymentCard = new UserPaymnetCards();
-            $paymentCard->user_id = $rentOrder->user->id;
-            $paymentCard->bank_name = $responseResult->EscrowBank;
-            $paymentCard->card_no_first_6 = $responseResult->Card6No;
-            $paymentCard->card_no_last_4 = $responseResult->Card4No;
-            $paymentCard->card_expired_date = $responseResult->Exp;
-            $paymentCard->token_value = $responseResult->TokenValue;
-            $paymentCard->token_expired_date = $responseResult->TokenLife;
-            $paymentCard->save();
+        $user = User::findOrFail($order->user_id);
 
-        } else {
-            //TODO: change to error page in frontend
-            return redirect(env('HOME_PAGE'), 302);
+        $sellCar = SellCar::findOrFail($order->sell_car_id);
+
+        $details = $sellCar->car->brand . ' ' . $sellCar->car->series . '於' . $order->start_date . '至'
+            . $order->end_date . '之體驗費用';
+
+        $client = new Client();
+        try {
+            $response = $client->post(env('TAPPAY_PRIME_API'), [
+                'headers' => [
+                    'Content-Type' => 'application/json',
+                    'x-api-key' => env('TAPPAY_X_API_KEY'),
+                ],
+                'json' => [
+                    'prime' => $request->prime,
+                    'partner_key' => env('TAPPAY_PARTNER_KEY'),
+                    'merchant_id' => env('TAPPAY_MERCHANT_ID'),
+                    'details' => $details,
+                    'order_number' => $order->order_no,
+                    'amount' => $request->amount,
+                    'cardholder' => [
+                        'phone_number' => $user->mobile,
+                        'name' => $user->name,
+                        'email' => $user->email,
+                        'address' => $user->address,
+                        'national_id' => $user->ID_number,
+                    ],
+                    'remember' => $request->remember,
+                ],
+                'timeout' => 30
+            ]);
+
+            $responseObj = json_decode($response->getBody());
+
+            if ($responseObj->status !== 0) {
+                return $this->returnError($responseObj->msg);
+            }
+
+            $order->status = 'PAID';
+            $order->save();
+dd($responseObj);
+            return $response->getBody()->getContents();
+
+        } catch (\Exception $e) {
+            return $this->returnError('TAPPAY PAI FAILED');
         }
     }
 }
