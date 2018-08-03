@@ -81,9 +81,9 @@ class payController extends Controller
     {
         $order = RentOrder::findOrFail($request->order_id);
 
-//        if ($order->status === 'PAID') {
-//            return $this->returnError('此訂單已付款');
-//        }
+        if ($order->status === 'PAID') {
+            return $this->returnError('此訂單已付款');
+        }
 
         if ($request->amount !== $order->total_price) {
             return $this->returnError('付款金額不正確');
