@@ -19,7 +19,9 @@ class PaymentDetailTransformer extends \League\Fractal\TransformerAbstract
             'promo_code_discount' => $paymentDetail->promo_code_discount,
             'long_rent_discount' => $paymentDetail->long_rent_discount,
             'rent_price' => $paymentDetail->rent_price,
-            'total_price' => $paymentDetail->total_price
+            'total_price' => $paymentDetail->total_price,
+            'user_points' => $paymentDetail->user_points,
+            'user_wallets' => $paymentDetail->user_wallets,
         ];
     }
 }

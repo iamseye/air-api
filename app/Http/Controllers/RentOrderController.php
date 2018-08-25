@@ -19,6 +19,7 @@ use App\Transformers\PaymentDetailTransformer;
 use Carbon\Carbon;
 use GuzzleHttp\Client;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class RentOrderController extends Controller
 {
@@ -186,6 +187,12 @@ class RentOrderController extends Controller
             $paymentDetail->pickup_place = $sellCar->carCenter->address;
         }
 
+        $user = Auth::user();
+        $walletAmounts = 0;
+        if ($user->is_seller && $user->seller) {
+            $walletAmounts = $user->seller->wallet_amount;
+        }
+
         $paymentDetail->car_year = $sellCar->car->year;
         $paymentDetail->car_name = $sellCar->car->brand . ' ' . $sellCar->car->series_model;
         $paymentDetail->start_date = $request->start_date;
@@ -202,6 +209,8 @@ class RentOrderController extends Controller
             $paymentDetail->emergency_fee,
             $paymentDetail->promo_code_discount + $paymentDetail->long_rent_discount
         );
+        $paymentDetail->user_points = $user->point_amount;
+        $paymentDetail->user_wallets = $walletAmounts;
 
         return fractal()
             ->item($paymentDetail)
