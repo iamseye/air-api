@@ -16,6 +16,7 @@ use App\Traits\ResponseTrait;
 use App\Traits\ShareFunctionTrait;
 use App\Transformers\RentOrderTransformer;
 use App\Transformers\PaymentDetailTransformer;
+use App\Transformers\PromoCodeTransformer;
 use Carbon\Carbon;
 use GuzzleHttp\Client;
 use Illuminate\Http\Request;
@@ -92,6 +93,7 @@ class RentOrderController extends Controller
             $rentDays,
             $order->insurance_price,
             $order->emergency_fee,
+            $order->pickup_price,
             $order->promo_code_discount + $order->long_rent_discount
         );
         $order->save();
@@ -131,6 +133,7 @@ class RentOrderController extends Controller
             $rentPrice,
             $rentDays,
             $extendOrder->insurance_price,
+            0,
             0,
             0
         );
@@ -207,6 +210,7 @@ class RentOrderController extends Controller
             $rentDays,
             $paymentDetail->insurance_price,
             $paymentDetail->emergency_fee,
+            $paymentDetail->pickup_price,
             $paymentDetail->promo_code_discount + $paymentDetail->long_rent_discount
         );
         $paymentDetail->user_points = $user->point_amount;
@@ -308,14 +312,34 @@ class RentOrderController extends Controller
         if ($promoCode) {
             return true;
         }
-
         return false;
     }
 
-
-    public function getTotalPrice($rentPrice, $rentDays, $insurancePrice, $emergencyFee, $totalDiscount)
+    public function getPromoCodePrice(Request $request)
     {
-        return $rentPrice * $rentDays + $insurancePrice + $emergencyFee - $totalDiscount;
+        if ($request->promo_code) {
+            $promoCode = PromoCode::where('code', '=', $request->promo_code)
+                ->where('expired_at', '>=', Carbon::now())
+                ->where('remain_use_times', '>', 0)
+                ->first();
+
+            if ($promoCode) {
+                return fractal()
+                    ->item($promoCode)
+                    ->transformWith(new PromoCodeTransformer())
+                    ->toArray();
+            }
+
+            return $this->returnError('此優惠代碼不存在或已過期');
+        }
+
+        return $this->returnError('請輸入優惠代碼');
+    }
+
+
+    public function getTotalPrice($rentPrice, $rentDays, $insurancePrice, $emergencyFee, $pickupPrice, $totalDiscount)
+    {
+        return $rentPrice * $rentDays + $insurancePrice + $emergencyFee + $pickupPrice - $totalDiscount;
     }
 
     public function getLongRentDiscount($rentPrice, $rentDays)

@@ -35,7 +35,7 @@ Route::get('sellcars/{id}', 'SellCarController@show')->name('sellcar.show');
 Route::post('search-sellcars', 'SearchController@searchSellCar')->name('searchSellCar');
 Route::get('getInitialInfo', 'InitialController@getInitialInfo')->name('init.getInitialInfo');
 Route::post('get-brand-options', 'SearchController@getBrandOptions')->name('search.getSeries');
-
+Route::post('get-promo-code-price', 'RentOrderController@getPromoCodePrice')->name('rentOrder.getPromoCodePrice');
 
 Route::group(['middleware' => 'auth:api'], function () {
     Route::put('user/{id}', 'UserController@update')->name('user.update');
