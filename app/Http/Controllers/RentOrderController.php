@@ -170,13 +170,6 @@ class RentOrderController extends Controller
         $paymentDetail->pickup_price = 0;
         $paymentDetail->promo_code_discount = 0;
 
-        if ($request->promo_code !=null) {
-            if (!$this->isPromoCodeValid($request->promo_code)) {
-                return $this->returnError('此優惠代碼無效或已超過使用次數');
-            }
-            $paymentDetail->promo_code_discount = $this->getPromoCodeDiscount($rentPrice, $request->promo_code);
-        }
-
         if ($request->pickup_home_address !== null) {
             $distance = $this->getKmDistance($request->pickup_home_address, $sellCar->carCenter->address);
 
@@ -208,10 +201,9 @@ class RentOrderController extends Controller
         $paymentDetail->total_price = $this->getTotalPrice(
             $rentPrice,
             $rentDays,
-            $paymentDetail->insurance_price,
             $paymentDetail->emergency_fee,
             $paymentDetail->pickup_price,
-            $paymentDetail->promo_code_discount + $paymentDetail->long_rent_discount
+            $paymentDetail->long_rent_discount
         );
         $paymentDetail->user_points = $user->point_amount;
         $paymentDetail->user_wallets = $walletAmounts;
@@ -337,9 +329,9 @@ class RentOrderController extends Controller
     }
 
 
-    public function getTotalPrice($rentPrice, $rentDays, $insurancePrice, $emergencyFee, $pickupPrice, $totalDiscount)
+    public function getTotalPrice($rentPrice, $rentDays, $emergencyFee, $pickupPrice, $totalDiscount)
     {
-        return $rentPrice * $rentDays + $insurancePrice + $emergencyFee + $pickupPrice - $totalDiscount;
+        return $rentPrice * $rentDays + $emergencyFee + $pickupPrice - $totalDiscount;
     }
 
     public function getLongRentDiscount($rentPrice, $rentDays)

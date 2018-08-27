@@ -16,7 +16,6 @@ class PaymentDetailTransformer extends \League\Fractal\TransformerAbstract
             'rent_days' => $paymentDetail->rent_days,
             'insurance_price' => $paymentDetail->insurance_price,
             'emergency_fee' => $paymentDetail->emergency_fee,
-            'promo_code_discount' => $paymentDetail->promo_code_discount,
             'long_rent_discount' => $paymentDetail->long_rent_discount,
             'rent_price' => $paymentDetail->rent_price,
             'total_price' => $paymentDetail->total_price,
